@@ -224,7 +224,7 @@ body:not(.printing) .paper:not(.previewing) .pron-tap-hint{visibility:visible}
   src:url('./assets/BpmfZihiKaiStd-Regular.woff2') format('woff2'),url('./assets/BpmfZihiKaiStd-Regular.ttf') format('truetype');
   font-style:normal;font-weight:400;font-display:swap;
 }
-:root{--annotation-font:'ZihiBpmfBundled';--trace-font:'DFKai-SB','標楷體','BiauKai','KaiTi','Kaiti TC','Noto Serif TC',serif}
+:root{--annotation-font:'DFKai-SB';--trace-font:'DFKai-SB','標楷體','BiauKai','KaiTi','Kaiti TC','Noto Serif TC',serif}
 .pron-target .native-hanzi,.pron-option .native-hanzi{font-family:var(--annotation-font),'ZihiBpmfBundled',serif!important;font-weight:400!important}
 /* 描紅提示只畫標楷體的國字；獨立於附注音的示範字型與全卷字體設定。 */
 .grid-cell.trace .grid-glyph{font-family:var(--trace-font)!important;font-weight:400!important;font-style:normal!important;font-synthesis:none;}
@@ -510,7 +510,7 @@ const BPMF_VARIANT_COUNTS={"䰰":2,"一":3,"万":2,"上":2,"不":4,"且":2,"中"
 const BPMF_COMMON="一:ㄧ,ㄧˊ,ㄧˋ;不:ㄅㄨˋ,ㄅㄨˊ,ㄈㄡ,ㄈㄨ;大:ㄉㄚˋ,ㄉㄞˋ;中:ㄓㄨㄥ,ㄓㄨㄥˋ;上:ㄕㄤˋ,ㄕㄤˇ;了:˙ㄌㄜ,ㄌㄧㄠˇ;的:˙ㄉㄜ,ㄉㄧˊ,ㄉㄧˋ;會:ㄏㄨㄟˋ,ㄎㄨㄞˋ,ㄏㄨㄟˇ,ㄍㄨㄟˋ;得:ㄉㄜˊ,˙ㄉㄜ,ㄉㄟˇ;行:ㄒㄧㄥˊ,ㄏㄤˊ,ㄒㄧㄥˋ,ㄏㄤˋ;長:ㄔㄤˊ,ㄓㄤˇ,ㄓㄤˋ;樂:ㄌㄜˋ,ㄩㄝˋ,ㄧㄠˋ;重:ㄓㄨㄥˋ,ㄔㄨㄥˊ;著:˙ㄓㄜ,ㄓㄨˋ,ㄓㄠ,ㄓㄠˊ,ㄓㄨㄛˊ;和:ㄏㄜˊ,ㄏㄢˋ,ㄏㄜˋ,ㄏㄨㄛˋ,˙ㄏㄨㄛ,ㄏㄨˊ;地:ㄉㄧˋ,˙ㄉㄜ;都:ㄉㄡ,ㄉㄨ;還:ㄏㄞˊ,ㄏㄨㄢˊ;好:ㄏㄠˇ,ㄏㄠˋ;有:ㄧㄡˇ,ㄧㄡˋ;沒:ㄇㄟˊ,ㄇㄛˋ;作:ㄗㄨㄛˋ,ㄗㄨㄛˊ,ㄗㄨㄛ;為:ㄨㄟˊ,ㄨㄟˋ;解:ㄐㄧㄝˇ,ㄐㄧㄝˋ,ㄒㄧㄝˋ;參:ㄘㄢ,ㄕㄣ,ㄘㄣ,ㄙㄢ;差:ㄔㄚ,ㄔㄞ,ㄘ,ㄘㄨㄛ;當:ㄉㄤ,ㄉㄤˋ;把:ㄅㄚˇ,ㄅㄚˋ;放:ㄈㄤˋ,ㄈㄤˇ;看:ㄎㄢˋ,ㄎㄢ;教:ㄐㄧㄠˋ,ㄐㄧㄠ;要:ㄧㄠˋ,ㄧㄠ;種:ㄓㄨㄥˇ,ㄓㄨㄥˋ;空:ㄎㄨㄥ,ㄎㄨㄥˋ;數:ㄕㄨˋ,ㄕㄨˇ,ㄕㄨㄛˋ,ㄘㄨˋ,ㄙㄨˋ;便:ㄅㄧㄢˋ,ㄆㄧㄢˊ;背:ㄅㄟˋ,ㄅㄟ;藏:ㄘㄤˊ,ㄗㄤˋ;讀:ㄉㄨˊ,ㄉㄡˋ;說:ㄕㄨㄛ,ㄕㄨㄟˋ;轉:ㄓㄨㄢˇ,ㄓㄨㄢˋ;調:ㄊㄧㄠˊ,ㄉㄧㄠˋ;角:ㄐㄧㄠˇ,ㄐㄩㄝˊ,ㄌㄨˋ;更:ㄍㄥˋ,ㄍㄥ;分:ㄈㄣ,ㄈㄣˋ;幹:ㄍㄢˋ,ㄏㄢˊ;盛:ㄔㄥˊ,ㄕㄥˋ;朝:ㄔㄠˊ,ㄓㄠ;少:ㄕㄠˇ,ㄕㄠˋ;幾:ㄐㄧˇ,ㄐㄧ;曾:ㄘㄥˊ,ㄗㄥ;累:ㄌㄟˋ,ㄌㄟˇ;華:ㄏㄨㄚˊ,ㄏㄨㄚ,ㄏㄨㄚˋ;覺:ㄐㄩㄝˊ,ㄐㄧㄠˋ;校:ㄒㄧㄠˋ,ㄐㄧㄠˋ;落:ㄌㄨㄛˋ,ㄌㄚˋ,ㄌㄠˋ;單:ㄉㄢ,ㄕㄢˋ,ㄔㄢˊ;父:ㄈㄨˋ,ㄈㄨˇ,˙ㄈㄨ;過:ㄍㄨㄛˋ,ㄍㄨㄛ;弟:ㄉㄧˋ,˙ㄉㄧ,ㄊㄧˋ;假:ㄐㄧㄚˇ,ㄐㄧㄚˋ;處:ㄔㄨˇ,ㄔㄨˋ;強:ㄑㄧㄤˊ,ㄑㄧㄤˇ,ㄐㄧㄤˋ;難:ㄋㄢˊ,ㄋㄢˋ,ㄋㄨㄛˊ;降:ㄐㄧㄤˋ,ㄒㄧㄤˊ;傳:ㄔㄨㄢˊ,ㄓㄨㄢˋ;將:ㄐㄧㄤ,ㄐㄧㄤˋ,ㄑㄧㄤ;乾:ㄍㄢ,ㄑㄧㄢˊ;率:ㄌㄩˋ,ㄕㄨㄞˋ;量:ㄌㄧㄤˋ,ㄌㄧㄤˊ;稱:ㄔㄥ,ㄔㄥˋ;否:ㄈㄡˇ,ㄆㄧˇ;曲:ㄑㄩˇ,ㄑㄩ;薄:ㄅㄛˊ,ㄅㄛˋ;飲:ㄧㄣˇ,ㄧㄣˋ;應:ㄧㄥ,ㄧㄥˋ;正:ㄓㄥˋ,ㄓㄥ;車:ㄔㄜ,ㄐㄩ;給:ㄍㄟˇ,ㄐㄧˇ;可:ㄎㄜˇ,ㄎㄜˋ;跑:ㄆㄠˇ,ㄆㄠˊ;圈:ㄑㄩㄢ,ㄐㄩㄢˋ;相:ㄒㄧㄤˋ,ㄒㄧㄤ;倒:ㄉㄠˋ,ㄉㄠˇ;喝:ㄏㄜ,ㄏㄜˋ;炸:ㄓㄚˋ,ㄓㄚˊ;嚇:ㄒㄧㄚˋ,ㄏㄜˋ";
 const bpmfReadings=Object.fromEntries(BPMF_COMMON.split(';').map(entry=>{let pos=entry.indexOf(':');return [entry.slice(0,pos),entry.slice(pos+1).split(',')]}));
 const BUILT_IN_FONT_URL='./assets/BpmfZihiKaiStd-Regular.ttf';
-let zihiFace=null,zihiFontUrl=null,zihiFontReady=false,zihiFontMode='builtin';
+let zihiFace=null,zihiFontUrl=null,zihiFontReady=false,zihiFontMode='later';
 let builtInLoadTask=null;
 function reportZihiStatus(message,level='ok'){
  document.querySelectorAll('[id^="bpmfStatus"]').forEach(el=>{el.textContent=message;el.className='font-info font-status-primary '+level;});
@@ -791,7 +791,7 @@ function studentFieldHtml(label,key,placeholder){
 }
 function paperHeaderHtml(){return `<header class="paper-header"><div class="paper-grade" contenteditable="${!previewMode}" data-edit-global="gradeLabel" spellcheck="false">${esc(state.gradeLabel)}</div><div class="paper-title" contenteditable="${!previewMode}" data-edit-global="title" spellcheck="false">${esc(state.title)}</div><div class="paper-subline">${state.showClass?studentFieldHtml('班級','classText','點擊填入'):''}${state.showSeat?studentFieldHtml('座號','seatText','填入'):''}${state.showName?studentFieldHtml('姓名','studentName','點擊填入'):''}</div></header>${state.instructions?.trim()?`<div class="paper-instructions" contenteditable="${!previewMode}" data-edit-global="instructions" spellcheck="false">${esc(state.instructions)}</div>`:''}`;}
 function renderCharacterButton(item,part,index){
- const annotated=state.showAnnotatedExample&&!part.manualUnmatched;
+ const annotated=state.showAnnotatedExample&&zihiFontReady&&!part.manualUnmatched;
  return `<button type="button" class="pron-target ${annotated?'with-annotation':''}" data-pron-target="${esc(item.id)}" data-pron-char-index="${index}" title="輕觸切換「${esc(part.char)}」的讀音" aria-label="切換「${esc(part.char)}」的讀音"><span class="${annotated?'native-hanzi':'plain-hanzi'}">${esc(annotated?variantText(part.char,part.variantIndex):part.char)}</span><span class="pron-tap-hint">↻ 換讀音</span></button>`;
 }
 function renderWritingCells(item,character){
@@ -869,7 +869,7 @@ function renderPaper(){
  $('#pageCountLabel').textContent=`${number} 頁 A4`;
  $('#centerpane').scrollTop=priorScroll;
  // 延後載入完整字嗨字型：一般注音填空只用系統注音字，不必等待 7.7 MB 字型。
- if(state.showAnnotatedExample&&zihiFontMode==='builtin'&&!zihiFontReady&&!builtInLoadTask)void ensureBundledFont();
+ /* V16：僅在教師主動選擇後載入字型；字型管理模組共用於各模式。 */
  syncDraftPreview();
 }
 function renderList(){const host=$('#itemList');host.innerHTML=state.items.map((it,n)=>`<div class="item-row ${selectedId===it.id?'active':''}" data-list-id="${esc(it.id)}" draggable="true"><span class="num">${n+1}</span><strong class="glyph">${esc(it.char)}</strong><div class="item-text">${esc(it.phonetic||'尚未設定注音')}<div>${wordParts(it).length>1?'詞語 · '+wordParts(it).length+' 字 · ':''}${state.mode==='zhuyin'?'注音填空':it.gridCount+' 格／字'}</div></div><div class="row-actions"><button class="mini" data-action="up" data-id="${esc(it.id)}" aria-label="上移" title="上移">↑</button><button class="mini" data-action="down" data-id="${esc(it.id)}" aria-label="下移" title="下移">↓</button></div></div>`).join('');const ready=!!getSelected();$('#duplicateSelectedBtn').disabled=!ready||state.items.length>=120;$('#deleteSelectedBtn').disabled=!ready;}
@@ -1111,5 +1111,6 @@ function setupEvents(){
 (async function init(){loadOnlineReadings();window.showAnswers=false;state=normalizeState(await loadStorage()||initialState());selectedId=state.items[0]?.id||null;setupEvents();renderAll();renderDraftHeader();showStage('home');$('#saveStatus').textContent='✓ 可編輯・本機草稿';if(!builtInLoadTask)reportZihiStatus('✓ 網站已就緒；需要字嗨直式注音例字時才載入完整字型。');})();
 </script>
 <dialog class="pron-modal" id="pronModal" aria-labelledby="pronModalTitle"><div class="pron-modal-head"><h2 id="pronModalTitle">切換國字讀音</h2><button type="button" id="pronClose" class="closebtn" aria-label="關閉">×</button></div><p class="font-info" id="pronModalHelp">選擇後將同步更新例字的直式注音與本題的注音答案。</p><div class="pron-options" id="pronOptions"></div><div class="pron-manual" id="pronManual"><label for="pronManualInput">一字多音：手動修正注音</label><input class="input" id="pronManualInput" placeholder="例如 ㄏㄤˊ" aria-label="自訂注音讀音"><button type="button" class="btn primary" id="pronManualApply">套用這個讀音</button></div><div class="bpmf-legend" id="pronSourceNote"></div></dialog>
+<script defer src="./assets/font-manager-v16.js"></script>
 </body>
 </html>
