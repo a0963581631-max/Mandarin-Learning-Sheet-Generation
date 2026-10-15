@@ -1,0 +1,43 @@
+name: Optimize Zihi font (WOFF2)
+on:
+  push:
+    paths:
+      - '.github/workflows/optimize-zihi-font.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Convert full Zihi font into compressed WOFF2
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet 'fonttools[woff]'
+          python - <<'PY'
+          from fontTools.ttLib import TTFont
+          from pathlib import Path
+          source = Path('assets/BpmfZihiKaiStd-Regular.ttf')
+          target = Path('assets/BpmfZihiKaiStd-Regular.woff2')
+          assert source.stat().st_size > 10_000_000
+          font = TTFont(source)
+          font.flavor = 'woff2'
+          font.save(target)
+          test = TTFont(target)
+          assert len(test.getGlyphOrder()) == len(font.getGlyphOrder())
+          print(f"WOFF2 bytes: {target.stat().st_size}; original bytes: {source.stat().st_size}")
+          PY
+      - name: Save optimized font in this repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/BpmfZihiKaiStd-Regular.woff2
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add complete WOFF2 Zihi font to reduce download size'
+            git push origin HEAD:main
+          fi
