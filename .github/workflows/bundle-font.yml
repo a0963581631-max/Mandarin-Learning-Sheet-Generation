@@ -1,0 +1,40 @@
+name: Bundle local Zhuyin font
+
+on:
+  push:
+    paths:
+      - '.github/workflows/bundle-font.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bundle-font:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v4
+
+      - name: Download the font into this repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl --fail --location --retry 4 --retry-delay 3 \
+            'https://raw.githubusercontent.com/ButTaiwan/bpmfvs/master/fonts/BpmfZihiKaiStd-Regular.ttf' \
+            --output assets/BpmfZihiKaiStd-Regular.ttf
+          test "$(wc -c < assets/BpmfZihiKaiStd-Regular.ttf)" -gt 10000000
+          echo "Downloaded font $(wc -c < assets/BpmfZihiKaiStd-Regular.ttf) bytes"
+
+      - name: Commit the bundled font
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/BpmfZihiKaiStd-Regular.ttf
+          if ! git diff --cached --quiet; then
+            git commit -m 'Bundle Zihi Bopomofo font for local loading'
+            git push origin HEAD:main
+          fi
