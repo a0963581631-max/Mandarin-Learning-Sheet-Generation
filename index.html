@@ -831,6 +831,8 @@ function renderPaper(){
  $('#itemCountLabel').textContent=`${state.items.length} 道練習題`;
  $('#pageCountLabel').textContent=`${number} 頁 A4`;
  $('#centerpane').scrollTop=priorScroll;
+ // 延後載入完整字嗨字型：一般注音填空只用系統注音字，不必等待 7.7 MB 字型。
+ if(state.showAnnotatedExample&&zihiFontMode==='builtin'&&!zihiFontReady&&!builtInLoadTask)void ensureBundledFont();
  syncDraftPreview();
 }
 function renderList(){const host=$('#itemList');host.innerHTML=state.items.map((it,n)=>`<div class="item-row ${selectedId===it.id?'active':''}" data-list-id="${esc(it.id)}" draggable="true"><span class="num">${n+1}</span><strong class="glyph">${esc(it.char)}</strong><div class="item-text">${esc(it.phonetic||'尚未設定注音')}<div>${wordParts(it).length>1?'詞語 · '+wordParts(it).length+' 字 · ':''}${state.mode==='zhuyin'?'注音填空':it.gridCount+' 格／字'}</div></div><div class="row-actions"><button class="mini" data-action="up" data-id="${esc(it.id)}" aria-label="上移" title="上移">↑</button><button class="mini" data-action="down" data-id="${esc(it.id)}" aria-label="下移" title="下移">↓</button></div></div>`).join('');const ready=!!getSelected();$('#duplicateSelectedBtn').disabled=!ready||state.items.length>=120;$('#deleteSelectedBtn').disabled=!ready;}
@@ -1069,7 +1071,7 @@ function setupEvents(){
   $('#resumeBtn').onclick=()=>{if(state.items.length){draftHasGenerated=true;previewMode=false;showStage('editor');renderAll();}};
  window.addEventListener('resize',()=>{applyZoom();fitDraftPreview();});window.addEventListener('beforeprint',()=>{document.querySelector('#paper').classList.add('previewing');});window.addEventListener('afterprint',()=>{document.querySelector('#paper').classList.toggle('previewing',previewMode);});
 }
-(async function init(){loadOnlineReadings();window.showAnswers=false;state=normalizeState(await loadStorage()||initialState());selectedId=state.items[0]?.id||null;setupEvents();renderAll();renderDraftHeader();showStage('home');$('#saveStatus').textContent='✓ 可編輯・本機草稿';await ensureBundledFont();})();
+(async function init(){loadOnlineReadings();window.showAnswers=false;state=normalizeState(await loadStorage()||initialState());selectedId=state.items[0]?.id||null;setupEvents();renderAll();renderDraftHeader();showStage('home');$('#saveStatus').textContent='✓ 可編輯・本機草稿';if(!builtInLoadTask)reportZihiStatus('✓ 網站已就緒；需要字嗨直式注音例字時才載入完整字型。');})();
 </script>
 <dialog class="pron-modal" id="pronModal" aria-labelledby="pronModalTitle"><div class="pron-modal-head"><h2 id="pronModalTitle">切換國字讀音</h2><button type="button" id="pronClose" class="closebtn" aria-label="關閉">×</button></div><p class="font-info" id="pronModalHelp">選擇後將同步更新例字的直式注音與本題的注音答案。</p><div class="pron-options" id="pronOptions"></div><div class="pron-manual" id="pronManual"><label for="pronManualInput">一字多音：手動修正注音</label><input class="input" id="pronManualInput" placeholder="例如 ㄏㄤˊ" aria-label="自訂注音讀音"><button type="button" class="btn primary" id="pronManualApply">套用這個讀音</button></div><div class="bpmf-legend" id="pronSourceNote"></div></dialog>
 </body>
