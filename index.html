@@ -330,7 +330,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
 @media print{
  .paper .zhuyin-fill button.zf-symbol{
   display:grid!important;visibility:visible!important;opacity:1!important;
-  color:#193e44!important;font-family:'DFKai-SB','標楷體','Microsoft JhengHei','Noto Sans TC',sans-serif!important;
+  color:#193e44!important; /* 字型沿用螢幕預覽設定，維持輸出一致 */
  }
  .paper .zhuyin-fill button.zf-symbol.zf-masked{color:transparent!important}
  .paper .zhuyin-fill button.zf-symbol.zf-masked::after{visibility:visible!important}
