@@ -30,8 +30,12 @@ jobs:
           mkdir -p public/assets
           cp index.html public/index.html
           cp assets/BpmfZihiKaiStd-Regular.ttf public/assets/
+          cp assets/BpmfZihiKaiStd-Regular.woff2 public/assets/
+          cp assets/font-manager-v16.js public/assets/
           test -s public/index.html
           test -s public/assets/BpmfZihiKaiStd-Regular.ttf
+          test -s public/assets/BpmfZihiKaiStd-Regular.woff2
+          test -s public/assets/font-manager-v16.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
