@@ -343,6 +343,34 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
 .auto-reading-status.alert{background:#fff3e9;color:#98521f;border-color:#f1d1b3}
 .pron-manual{padding:12px;background:#f3f8f7;border-radius:11px;margin-top:12px;display:flex;flex-direction:column;gap:7px}
 .pron-manual label{font-size:12px;font-weight:750;color:#355b58}
+
+/* V15：只有單一注音符號時置中；二、三、四聲位置略高於中心。 */
+.zhuyin-fill.zf-single{align-items:center}
+.zhuyin-fill.zf-single .zf-stack{min-height:72px;justify-content:center}
+.zhuyin-fill.zf-single .zf-tone:not(.zf-neutral){top:calc(50% - 8px)}
+/* V15：只有「注音填空」採用按內容寬度自動橫排、換列；練字格不變。 */
+.paper.zhuyin-sheet .zhuyin-question-flow{
+ display:flex;flex-wrap:wrap;align-items:flex-start;align-content:flex-start;gap:12px 10px;width:100%;min-width:0;
+}
+.paper.zhuyin-sheet .zhuyin-question-flow > .paper-item{
+ box-sizing:border-box;flex:0 0 auto;width:max-content;max-width:100%;min-width:208px;
+ padding:9px 10px 10px;margin:0;overflow:visible;
+}
+.paper.zhuyin-sheet .zhuyin-question-flow .activity-row{justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.paper.zhuyin-sheet .zhuyin-question-flow .practice-group.mode-zhuyin{flex:0 1 auto;min-width:0;gap:8px}
+.paper.zhuyin-sheet .zhuyin-question-flow .practice-group.mode-zhuyin .target-character{min-width:0;gap:6px;flex:0 0 auto}
+.paper.zhuyin-sheet .zhuyin-question-flow .practice-group.mode-zhuyin .pron-target{width:80px;min-width:80px;max-width:105px}
+.paper.zhuyin-sheet .zhuyin-question-flow .practice-group.mode-zhuyin .pron-target.with-annotation{width:105px;min-width:105px}
+.paper.zhuyin-sheet .zhuyin-question-flow .practice-group.mode-zhuyin .zhuyin-fill{margin:0;min-width:76px}
+.paper.zhuyin-sheet .zhuyin-question-flow .word-practice-group{width:auto;max-width:100%}
+.paper.zhuyin-sheet .zhuyin-question-flow .word-examples{width:max-content;max-width:100%;justify-content:flex-start}
+.paper.zhuyin-sheet .zhuyin-question-flow .word-example{min-width:0;gap:4px}
+.paper.zhuyin-sheet .zhuyin-question-flow .word-examples .pron-target{width:80px;min-width:80px}
+.paper.zhuyin-sheet .zhuyin-question-flow .word-examples .pron-target.with-annotation{width:95px;min-width:95px}
+@media print{
+ .paper.zhuyin-sheet .zhuyin-question-flow{display:flex!important;flex-wrap:wrap!important}
+ .paper.zhuyin-sheet .zhuyin-question-flow > .paper-item{break-inside:avoid!important;page-break-inside:avoid!important}
+}
 </style>
 </head>
 <body>
@@ -739,11 +767,12 @@ function zhuyinHtml(item,partIndex=0,partInput=null){
   const hidden=!isAnswer&&mask[k],glyph=hidden?'':data[k];
   return `<button type="button" class="zf-symbol ${hidden?'zf-masked':''}" data-zhuyin-item="${esc(item.id)}" data-zhuyin-part="${partIndex}" data-zhuyin-component="${k}" ${previewMode?'disabled':''} aria-label="${ZF_NAMES[k]}${hidden?'已挖空':'目前'+data[k]}，點擊切換" title="點擊${hidden?'還原':'挖空'}${ZF_NAMES[k]}">${esc(glyph)}</button>`;
  }).join('');
+ const mainCount=ZF_COMPONENTS.slice(0,3).filter(k=>!!data[k]).length;
  const hiddenTone=!isAnswer&&mask.tone;
  const firstTone=!data.tone;
  const toneVal=hiddenTone?'':(data.tone||(!student?'一聲':''));
  const toneEl=`<button type="button" class="zf-symbol zf-tone ${data.neutral?'zf-neutral':''} ${hiddenTone?'zf-masked':''}" data-zhuyin-item="${esc(item.id)}" data-zhuyin-part="${partIndex}" data-zhuyin-component="tone" ${previewMode?'disabled':''} title="點擊${hiddenTone?'還原':'挖空'}聲調（${data.tone||'第一聲，無標號'}）" aria-label="聲調${hiddenTone?'已挖空':data.tone||'一聲'}，點擊切換">${firstTone&&!hiddenTone&&!isAnswer?'<span class="zf-first-hint">一聲</span>':esc(toneVal)}</button>`;
- return `<div class="zhuyin-fill ${student?'is-readonly':''}" role="group" aria-label="${esc(part?.char||item.char)}的直式注音填空"><div class="zf-stack">${main}</div>${toneEl}</div>`;
+ return `<div class="zhuyin-fill ${mainCount===1?'zf-single':''} ${student?'is-readonly':''}" role="group" aria-label="${esc(part?.char||item.char)}的直式注音填空"><div class="zf-stack">${main}</div>${toneEl}</div>`;
 }
 function toggleZhuyinMask(id,partIndex,component){
  if(previewMode||window.showAnswers||!ZF_COMPONENTS.includes(component))return;
@@ -786,7 +815,7 @@ function paperItemHtml(item,idx){
  return `<section class="paper-item ${!previewMode&&item.id===selectedId?'is-selected':''}" tabindex="${previewMode?-1:0}" data-item-id="${esc(item.id)}"><div class="prompt"><span class="item-counter">${idx+1}</span>${item.prompt?.trim()?`<span class="prompt-text" contenteditable="${!previewMode}" data-edit-prompt="${esc(item.id)}" spellcheck="false">${esc(item.prompt)}</span>`:''}</div><div class="activity-row">${item.imagePosition==='left'&&item.showImage?pic:''}${center}${item.imagePosition!=='left'&&item.showImage?pic:''}</div></section>`;
 }
 function createA4Page(index,measurement=false){
- const page=document.createElement('article');page.className='paper';page.setAttribute('aria-label',`A4 第 ${index} 頁`);
+ const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
  page.style.fontFamily=state.font;
  page.style.paddingLeft=state.margin+'mm';page.style.paddingRight=state.margin+'mm';
  page.style.paddingTop=Math.max(10,state.margin)+'mm';page.style.paddingBottom=Math.max(10,state.margin)+'mm';
@@ -800,19 +829,27 @@ function createA4Page(index,measurement=false){
  return {page,content};
 }
 /* 使用真實瀏覽器版面測量逐題高度；所有 A4 頁都固定 210×297 mm。 */
+function questionContainer(pageContent){
+ if(state.mode!=='zhuyin')return pageContent;
+ const flow=document.createElement('div');
+ flow.className='zhuyin-question-flow';
+ pageContent.append(flow);
+ return flow;
+}
 function renderPaper(){
  const dest=$('#paper'),measure=$('#pageMeasureRoot');
  const priorScroll=$('#centerpane').scrollTop;
  measure.innerHTML='';dest.innerHTML='';
  let number=1;let current=createA4Page(number,true);measure.append(current.page);
+ let questionHost=questionContainer(current.content);
  for(let idx=0;idx<state.items.length;idx++){
   const item=state.items[idx];const html=paperItemHtml(item,idx);
   const holder=document.createElement('div');holder.innerHTML=html;const node=holder.firstElementChild;
   node.classList.remove('is-selected');node.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable='false');
-  current.content.append(node);
+  questionHost.append(node);
   const exceeded=()=>current.content.scrollHeight>current.content.clientHeight+1;
   if(exceeded()&&current.content.querySelectorAll('.paper-item').length>1){
-    node.remove();number++;current=createA4Page(number,true);measure.append(current.page);current.content.append(node);
+    node.remove();number++;current=createA4Page(number,true);measure.append(current.page);questionHost=questionContainer(current.content);questionHost.append(node);
   }
   // 若單一題目超過一整頁可用範圍，將該題等比例縮小，使其仍保持在同一頁。
   if(exceeded()){
