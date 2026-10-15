@@ -221,8 +221,8 @@ body:not(.printing) .paper:not(.previewing) .pron-tap-hint{visibility:visible}
 /* V8：所有畫面的字嗨注音字型由本機隨附的 assets 檔案提供；無需每次上傳。 */
 @font-face{
   font-family:'ZihiBpmfBundled';
-  src:url('./assets/BpmfZihiKaiStd-Regular.ttf') format('truetype'),url('https://raw.githubusercontent.com/ButTaiwan/bpmfvs/master/fonts/BpmfZihiKaiStd-Regular.ttf') format('truetype');
-  font-style:normal;font-weight:400;font-display:block;
+  src:url('./assets/BpmfZihiKaiStd-Regular.woff2') format('woff2'),url('./assets/BpmfZihiKaiStd-Regular.ttf') format('truetype');
+  font-style:normal;font-weight:400;font-display:swap;
 }
 :root{--annotation-font:'ZihiBpmfBundled';--trace-font:'DFKai-SB','標楷體','BiauKai','KaiTi','Kaiti TC','Noto Serif TC',serif}
 .pron-target .native-hanzi,.pron-option .native-hanzi{font-family:var(--annotation-font),'ZihiBpmfBundled',serif!important;font-weight:400!important}
@@ -319,6 +319,24 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
  .zhuyin-fill .zf-first-hint{display:none!important}
 }
 
+
+/* V14：注音學習單旁的提示國字固定使用標楷體，與 A4 練寫格一致。 */
+.pron-target .plain-hanzi,.word-practice-line .pron-target .plain-hanzi,.word-examples .pron-target .plain-hanzi{
+ font-family:var(--trace-font)!important;font-weight:400!important;font-synthesis:none!important;
+}
+/* V14：原本全域列印規則 button{display:none} 誤把每個注音符號隱藏。
+   填空的四個可點選元素是 <button>，列印時必須強制保留。
+   注意已挖空的元素仍需維持空白，不可因列印顏色覆寫而顯示答案。 */
+@media print{
+ .paper .zhuyin-fill button.zf-symbol{
+  display:grid!important;visibility:visible!important;opacity:1!important;
+  color:#193e44!important;font-family:'DFKai-SB','標楷體','Microsoft JhengHei','Noto Sans TC',sans-serif!important;
+ }
+ .paper .zhuyin-fill button.zf-symbol.zf-masked{color:transparent!important}
+ .paper .zhuyin-fill button.zf-symbol.zf-masked::after{visibility:visible!important}
+ .paper .zhuyin-fill .zf-tone.zf-neutral{top:-9px!important}
+ .paper .zhuyin-fill{break-inside:avoid!important}
+}
 
 /* V13：初稿注音自動填入提示 */
 .auto-reading-status{font-size:12px;line-height:1.7;padding:8px 10px;border-radius:9px;background:#eaf8f2;color:#156d60;border:1px solid #c8e6db}
