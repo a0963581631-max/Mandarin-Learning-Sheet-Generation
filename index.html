@@ -419,6 +419,30 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
 .paper.worksheet-annotated-font .prompt-text{line-height:2}
 .paper.worksheet-annotated-font .paper-footer{line-height:1.9}
 @media print{.paper.worksheet-annotated-font .paper-instructions,.paper.worksheet-annotated-font .paper-title{overflow:visible}}
+
+/* 我的班級：建立本機名冊、批次學習單 */
+.home-class-actions{display:flex;justify-content:center;margin:22px auto 0}
+.home-class-actions .btn{height:45px;padding:0 19px;border-color:#83cabd;background:white;color:#138079;font-size:15px;box-shadow:0 6px 18px #287d7220}
+.class-dialog{border:0;border-radius:18px;padding:0;width:min(890px,calc(100vw - 20px));max-height:92vh;box-shadow:0 24px 85px #163e485c;background:#fff}
+.class-dialog::backdrop{background:#16383f85}
+.class-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 23px;border-bottom:1px solid #dcebe8}
+.class-dialog-head h2{margin:0;font-size:19px}.class-dialog-body{display:grid;grid-template-columns:210px minmax(0,1fr);max-height:68vh;min-height:340px}
+.class-menu{padding:17px;overflow-y:auto;background:#f5faf9;border-right:1px solid #dcebe8}
+.class-menu>#newClassBtn{margin-bottom:11px}
+.class-choice{display:flex;width:100%;flex-direction:column;gap:4px;padding:12px;text-align:left;background:white;border:1px solid #deebe7;border-radius:10px;margin-bottom:7px}
+.class-choice.active{background:#e6f7f1;border-color:#65b9ad}.class-choice small{font-size:11px;color:#71888b}
+.class-editor{padding:21px;overflow-y:auto}
+.class-editor-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.class-editor-head h3{margin:0;font-size:17px}
+.class-student-labels,.class-student{display:grid;grid-template-columns:76px minmax(0,1fr) 40px;align-items:center;gap:8px}
+.class-student-labels{color:#698186;font-size:12px;margin:16px 0 7px}
+.class-student{margin-bottom:8px}.class-student .input{min-width:0}.class-student .mini{border:1px solid #e6eeec;height:40px}
+.class-actions{display:flex;align-items:center;gap:12px;margin:16px 0}.class-actions span{color:#a4512d;font-size:12px}
+.class-dialog-foot{padding:13px 22px;font-size:11px;color:#688085;line-height:1.7;border-top:1px solid #e0ebea}
+.paper.class-batch-sheet .student-value{white-space:nowrap;cursor:default}
+.paper.class-batch-sheet .paper-continuation{gap:10px;flex-wrap:wrap}
+.paper.class-batch-sheet .continuation-student{font-size:11px}
+@media(max-width:680px){.class-dialog-body{grid-template-columns:1fr;overflow-y:auto}.class-menu{display:flex;flex-wrap:wrap;gap:8px;max-height:150px}.class-choice{width:auto;min-width:120px}.class-editor{overflow:visible;padding:14px}.class-student-labels,.class-student{grid-template-columns:58px minmax(0,1fr) 36px;gap:6px}}
 </style>
 </head>
 <body>
@@ -432,7 +456,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
     <div class="flow-hero">
       <span class="kicker">國語學習單製作</span>
       <h1>從一張專屬的國語學習單開始</h1>
-      <p>選擇類別、產生初稿，再自由調整。</p>
+      <p>選擇類別、產生初稿，再自由調整。</p><div class="home-class-actions"><button class="btn outline" id="homeClassesBtn" type="button">👥 我的班級</button></div>
     </div>
     <div class="category-grid" role="group" aria-label="選擇學習單類別">
       <button type="button" class="category-card" data-choose-mode="hanzi">
@@ -468,7 +492,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
         <h2>初稿設定</h2>
          <div class="draft-import"><span>已有學習單？</span><button type="button" id="openProjectBtn" class="btn small outline">↥ 匯入作品，直接編輯</button></div>
         <div class="form-field"><label for="inputGrade">適用年級</label><select class="select" id="inputGrade"><option value="一">一年級</option><option value="二">二年級</option><option value="三">三年級</option><option value="四">四年級</option><option value="五">五年級</option><option value="六">六年級</option></select></div>
-        <div class="form-field"><label for="inputTitle">學習單標題</label><input class="input" id="inputTitle" value="國字與注音練習單" placeholder="例如：第一課國字練習"></div>
+        <div class="form-field"><label for="draftClassSelect">我的班級（選填）</label><div class="row2"><select class="select" id="draftClassSelect"><option value="">不指定班級（1 份）</option></select><button class="btn outline" type="button" id="draftClassesBtn">管理班級</button></div><p class="pane-hint" id="draftClassHint">不指定班級時維持原本 1 份學習單。</p></div><div class="form-field"><label for="inputTitle">學習單標題</label><input class="input" id="inputTitle" value="國字與注音練習單" placeholder="例如：第一課國字練習"></div>
         <div class="form-field"><label for="inputChars" id="draftCharsLabel">要練習的國字</label><textarea class="textarea" id="inputChars" placeholder="例如：強、壯、河馬、黃">花、山、雨、魚、月</textarea><span class="pane-hint"><strong>以頓號「、」分隔題目</strong>，如：強、壯、河馬、黃（共四題）。詞語不拆題。</span><div class="auto-reading-status" id="autoReadingStatus">輸入國字後會自動填入注音；一字多音可點國字調整。</div></div>
         <div class="form-field font-option-row"><label>國字旁直式注音字型</label><div class="font-choice-label">可選網站內建或本機自訂字型</div><div class="font-source-picker"><button type="button" class="btn small active" data-reset-zihi="draft">✓ 使用網站內建字嗨字型</button></div><label class="font-pick">↥ 改用教師自訂字型（TTF／OTF／WOFF）<input type="file" id="bpmfFontDraft" accept=".ttf,.otf,.woff,.woff2"></label><div class="font-info font-status-primary" id="bpmfStatusDraft" aria-live="polite">尚未選擇字型來源</div><p class="font-usage-tip">無需再次上傳內建字型。自訂字型可能不支援注音 IVS，請先預覽破音字再列印。</p></div>
         <div class="form-field"><label>初稿提示程度</label><div class="pillrow" id="presetPills"><button type="button" class="chip active" data-preset="support">提示較多</button><button type="button" class="chip" data-preset="normal">標準練習</button><button type="button" class="chip" data-preset="independent">自主練習</button></div></div>
@@ -550,7 +574,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
   <div class="modal-filter"><input type="search" class="input" id="illustrationSearch" placeholder="搜尋插圖，例如：花、魚、山" aria-label="搜尋插圖"></div>
   <div class="modal-library" id="modalLibrary"></div>
 </dialog>
-<div id="pageMeasureRoot" aria-hidden="true"></div>
+<dialog id="classDialog" class="class-dialog" aria-labelledby="classDialogTitle"><div class="class-dialog-head"><h2 id="classDialogTitle">我的班級</h2><button type="button" class="btn small" id="classCloseBtn">✕ 關閉</button></div><div class="class-dialog-body"><aside class="class-menu"><button type="button" class="btn primary" id="newClassBtn">＋ 新增班級</button><div id="classList"></div></aside><section class="class-editor" id="classEditor"></section></div><div class="class-dialog-foot">學生名冊只儲存在此瀏覽器，不會自動上傳 GitHub；清除網站資料或換裝置可能遺失。含姓名的學習單備份請妥善保管。</div></dialog><div id="pageMeasureRoot" aria-hidden="true"></div>
 <script>
 'use strict';
 const $ = sel => document.querySelector(sel);
@@ -875,7 +899,7 @@ function syncWorksheetFontOption(){
  if(hint){const applied=state?.font===WORKSHEET_ANNOTATED_FONT;hint.textContent=applied?(zihiFontReady?'已套用到頁首、標題、全卷說明、班級／座號／姓名及一般題目文字；破音字與列印結果請教師校對。':'注音字型尚未載入，目前暫以一般楷體呈現。請按上方「字型設定」載入網站內建字嗨或教師字型。'):'可跟隨上方「字型設定」目前選擇的字嗨或教師上傳字型；只調整學習單一般文字，不改變描紅格及注音填空符號。';}
 }
 const modeMeta={hanzi:{name:'國字',title:'國字習寫學習單',instructions:'看國字與插圖，依正確筆順練習書寫。'},zhuyin:{name:'注音',title:'注音填空學習單',instructions:'看國字，填寫注音空格。'},both:{name:'國字＋注音',title:'國字與注音練習單',instructions:'參考提示字的國字與直式注音，在每組練習格中寫出國字及正確注音。'}};
-const defaults={version:13,showAnnotatedExample:false,mode:'both',sourceChars:'花、山、雨、魚、月',name:'一年級國語學習單',title:'國字與注音練習單',grade:'一',gradeLabel:'一年級 · 國語科',instructions:'看國字，填入正確的注音，接著練習國字書寫。',showClass:true,showSeat:true,showName:true,classText:"",seatText:"",studentName:"",showImageCaption:false,showFooter:false,margin:14,font:"'Microsoft JhengHei','PingFang TC',sans-serif",items:[]};
+const defaults={version:13,showAnnotatedExample:false,mode:'both',sourceChars:'花、山、雨、魚、月',name:'一年級國語學習單',title:'國字與注音練習單',grade:'一',gradeLabel:'一年級 · 國語科',instructions:'看國字，填入正確的注音，接著練習國字書寫。',showClass:true,showSeat:true,showName:true,classText:"",seatText:"",studentName:"",showImageCaption:false,showFooter:false,margin:14,font:"'Microsoft JhengHei','PingFang TC',sans-serif",classId:'',batchClass:null,items:[]};
 const newId=()=>`${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 function cleanUnit(s){return Array.from(String(s||'')).filter(c=>/\p{Script=Han}/u.test(c)).join('');}
 function makeWordParts(word,prior=[]){return Array.from(cleanUnit(word)).map((ch,index)=>{const old=prior[index];return old&&old.char===ch?{char:ch,variantIndex:Math.max(0,Math.min(variantCount(ch)-1,Number(old.variantIndex)||0)),phonetic:old.phonetic||autoPhonetic(ch,Number(old.variantIndex)||0),readingSource:old.readingSource||(old.phonetic?'legacy':'auto'),zhuyinMask:cleanZhuyinMask(old.zhuyinMask)}:{char:ch,variantIndex:0,phonetic:autoPhonetic(ch,0),readingSource:'auto',zhuyinMask:cleanZhuyinMask()};});}
@@ -898,7 +922,63 @@ function normalizeState(s){const obj={...structuredClone(defaults),...s};if(!mod
   // V8 以前的預設提示不算個別題目說明；僅保存教師自訂內容。
   const oldDefaults=['看國字，依正確筆順練習書寫。','看國字與圖片，填入正確的注音。','看國字，填入正確的注音，再依序練習書寫。'];
   if(oldDefaults.includes((item.prompt||'').trim()))item.prompt='';
-  return item;});if(s.showAnnotatedExample===undefined)obj.showAnnotatedExample=obj.mode!=='zhuyin';obj.version=13;return obj;}
+  return item;});if(s.showAnnotatedExample===undefined)obj.showAnnotatedExample=obj.mode!=='zhuyin';obj.classId=typeof obj.classId==='string'?obj.classId:'';obj.batchClass=obj.batchClass&&Array.isArray(obj.batchClass.students)&&obj.batchClass.students.length?{id:String(obj.batchClass.id||''),name:String(obj.batchClass.name||''),students:obj.batchClass.students.slice(0,80).map(x=>({id:String(x.id||''),seat:String(x.seat||''),name:String(x.name||'')})).filter(x=>x.seat&&x.name)}:null;obj.version=14;return obj;}
+const classroomApp=(function classFeature(){
+ const KEY="zixi-classes-2026";let classes=[],working=null,dbTask=null;
+ const safe=t=>String(t??"").trim();
+ function db(){if(!('indexedDB' in window))return Promise.reject(Error('No IndexedDB'));if(!dbTask)dbTask=new Promise((ok,no)=>{const q=indexedDB.open(KEY,1);q.onupgradeneeded=()=>q.result.createObjectStore('data');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error);q.onblocked=()=>no(Error('Blocked'));});return dbTask;}
+ async function load(){let list=[];try{const d=await db();list=await new Promise((ok,no)=>{const q=d.transaction('data','readonly').objectStore('data').get('classes');q.onsuccess=()=>ok(q.result||[]);q.onerror=()=>no(q.error);});}catch(e){try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}}classes=(Array.isArray(list)?list:[]).filter(x=>x&&x.id&&x.name&&Array.isArray(x.students)).map(x=>({id:safe(x.id),name:safe(x.name),students:x.students.filter(y=>y&&safe(y.seat)&&safe(y.name)).map(y=>({id:safe(y.id)||newId(),seat:safe(y.seat),name:safe(y.name)}))}));}
+ async function saveStore(){try{const d=await db();await new Promise((ok,no)=>{const tx=d.transaction('data','readwrite');tx.objectStore('data').put(classes,'classes');tx.oncomplete=ok;tx.onerror=()=>no(tx.error);});return true;}catch(e){try{localStorage.setItem(KEY,JSON.stringify(classes));return true;}catch(err){return false;}}}
+ const find=id=>classes.find(x=>x.id===id);
+ function batch(){const b=state?.batchClass;return b?.name&&Array.isArray(b.students)&&b.students.length?b:null;}
+ function firstStudent(){return batch()?.students[0]||null;}
+ function snapshot(id){const x=find(id);return x?.students.length?{id:x.id,name:x.name,students:x.students.map(y=>({...y})).sort((a,b)=>Number(a.seat)-Number(b.seat)||a.seat.localeCompare(b.seat))}:null;}
+ function syncSelection(){
+  const sel=$('#draftClassSelect');if(!sel)return;
+  sel.innerHTML='<option value="">不指定班級（只產生 1 份）</option>'+classes.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}（${x.students.length} 位）</option>`).join('');
+  sel.value=find(state?.classId)?state.classId:'';
+  const x=find(sel.value);
+  $('#draftClassHint').textContent=x?(x.students.length?`將依座號順序產生 ${x.students.length} 份，每份自動填入「${x.name}」與學生座號、姓名。`:'此班級還沒有學生，請先管理班級。'):'不指定班級時維持只產生 1 份，學生資料可手動填寫。';
+ }
+ function render(){
+  $('#classList').innerHTML=classes.map(x=>`<button type="button" class="class-choice ${working?.id===x.id?'active':''}" data-open-class="${esc(x.id)}"><strong>${esc(x.name)}</strong><small>${x.students.length} 人</small></button>`).join('')||'<p class="pane-hint">尚無班級</p>';
+  if(!working){$('#classEditor').innerHTML='<p class="pane-hint">請按「新增班級」，填寫班級名稱和學生名單。</p>';return;}
+  $('#classEditor').innerHTML=`<div class="class-editor-head"><h3>${find(working.id)?'編輯班級':'建立班級'}</h3>${find(working.id)?'<button id="removeClassBtn" type="button" class="btn small">刪除班級</button>':''}</div><label for="classTitle">班級名稱</label><input class="input" id="classTitle" maxlength="50" value="${esc(working.name)}" placeholder="例如：一年甲班"><div class="class-student-labels"><b>座號</b><b>學生姓名</b><b></b></div><div id="classRows">${working.students.map((x,i)=>`<div class="class-student"><input class="input" inputmode="numeric" maxlength="3" data-class-seat="${esc(x.id)}" aria-label="第${i+1}位座號" value="${esc(x.seat)}"><input class="input" maxlength="35" data-class-name="${esc(x.id)}" aria-label="第${i+1}位學生姓名" value="${esc(x.name)}" placeholder="學生姓名"><button type="button" class="mini" data-delete-student="${esc(x.id)}" title="移除學生">✕</button></div>`).join('')}</div><button type="button" class="btn outline" id="addStudentBtn">＋ 新增學生</button><div class="class-actions"><button type="button" class="btn primary" id="saveClassBtn">儲存班級</button><span id="classErrors" aria-live="polite"></span></div>`;
+ }
+ function open(){working=classes.length?structuredClone(classes[0]):null;render();$('#classDialog').showModal();}
+ function startNew(){working={id:newId(),name:'',students:[{id:newId(),seat:'1',name:''}]};render();$('#classTitle').focus();}
+ function addStudent(){if(!working)return;if(working.students.length>=80){toast('每班最多 80 位學生');return;}let seat=1,occupied=new Set(working.students.map(x=>Number(x.seat)));while(occupied.has(seat))seat++;working.students.push({id:newId(),seat:String(seat),name:''});render();const a=[...document.querySelectorAll('[data-class-name]')];a[a.length-1]?.focus();}
+ async function save(){
+  if(!working)return;const name=safe(working.name);
+  if(!name){$('#classErrors').textContent='請填入班級名稱';return;}
+  if(!working.students.length){$('#classErrors').textContent='請至少新增一位學生';return;}
+  const students=working.students.map(x=>({id:x.id,seat:safe(x.seat),name:safe(x.name)}));
+  if(students.some(x=>!/^\d{1,3}$/.test(x.seat)||Number(x.seat)<1||!x.name)){$('#classErrors').textContent='每位學生須有 1～999 的座號及姓名';return;}
+  if(new Set(students.map(x=>Number(x.seat))).size!==students.length){$('#classErrors').textContent='座號不可重複';return;}
+  const entry={id:working.id,name,students};
+  const pos=classes.findIndex(x=>x.id===entry.id);if(pos<0)classes.push(entry);else classes[pos]=entry;
+  const ok=await saveStore();working=structuredClone(entry);render();syncSelection();toast(ok?`已儲存 ${name}（${students.length} 位）`:'無法儲存名冊，請檢查瀏覽器儲存設定');
+ }
+ async function remove(){
+  if(!working||!find(working.id)||!confirm(`確定刪除「${working.name}」和所有學生資料？`))return;
+  const id=working.id;classes=classes.filter(x=>x.id!==id);
+  if(state.classId===id){state.classId='';if(draftHasGenerated)markDraftNeedsRegenerate();scheduleSave();}
+  const ok=await saveStore();working=classes.length?structuredClone(classes[0]):null;render();syncSelection();toast(ok?'已刪除班級':'刪除無法儲存');
+ }
+ function bind(){
+  $('#homeClassesBtn').onclick=open;$('#draftClassesBtn').onclick=open;$('#classCloseBtn').onclick=()=>$('#classDialog').close();
+  $('#newClassBtn').onclick=startNew;
+  $('#classList').onclick=e=>{const b=e.target.closest('[data-open-class]');if(b){working=structuredClone(find(b.dataset.openClass));render();}};
+  $('#classEditor').oninput=e=>{if(!working)return;if(e.target.id==='classTitle'){working.name=e.target.value;return;}const key=e.target.dataset.classSeat||e.target.dataset.className;const st=working.students.find(x=>x.id===key);if(st){if(e.target.dataset.classSeat)st.seat=e.target.value;else st.name=e.target.value;}};
+  $('#classEditor').onclick=e=>{if(e.target.closest('#addStudentBtn'))addStudent();else if(e.target.closest('#saveClassBtn'))void save();else if(e.target.closest('#removeClassBtn'))void remove();else{const b=e.target.closest('[data-delete-student]');if(b){working.students=working.students.filter(x=>x.id!==b.dataset.deleteStudent);render();}}};
+  $('#draftClassSelect').onchange=e=>{state.classId=e.target.value;syncSelection();if(draftHasGenerated)markDraftNeedsRegenerate();scheduleSave();};
+ }
+ function personalize(page,student,group){
+  const vals={classText:group.name,seatText:student.seat,studentName:student.name};
+  page.querySelectorAll('[data-class-field]').forEach(el=>{const k=el.dataset.classField;if(k in vals)el.textContent=vals[k];});
+ }
+ return {load,bind,syncSelection,snapshot,batch,firstStudent,personalize};
+})();
 function extractPracticeUnits(text){const raw=String(text||'').trim();const groups=/[、\r\n]/.test(raw)?raw.split(/[、\r\n]+/):raw.split(/\s+/);return groups.map(cleanUnit).filter(Boolean);}
 
 function gridGuideSvg(){return '<svg class="grid-guides" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="50" y1="0" x2="50" y2="100"/><line x1="0" y1="50" x2="100" y2="50"/></svg>';}
