@@ -407,6 +407,18 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
 .paper.both-sheet .combined-reading-tone.is-neutral{right:auto;left:6px;top:-4px;transform:none}
 .paper.both-sheet .combined-reading.is-pending{font-size:11px;color:#8a6d39;writing-mode:vertical-rl}
 @media print{.paper.both-sheet .combined-zhuyin-space{border-color:#526670!important;background:#fff!important}.paper.both-sheet .combined-zhuyin-guide i+i,.paper.both-sheet .combined-tone-space{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* 教師可將注音字型選作整張學習單的一般文字字型；練寫描紅與填空符號保留獨立設定。 */
+.paper.worksheet-annotated-font .paper-grade{font-size:14px;line-height:2.15;letter-spacing:.6px}
+.paper.worksheet-annotated-font .paper-title{line-height:2;letter-spacing:.2px;margin-bottom:9px}
+.paper.worksheet-annotated-font .paper-subline{line-height:2.2;align-items:baseline;gap:10px 15px}
+.paper.worksheet-annotated-font .paper-subline .student-field{align-items:baseline}
+.paper.worksheet-annotated-font .paper-subline .student-value{line-height:2.1;min-height:27px;padding-bottom:0}
+.paper.worksheet-annotated-font .paper-instructions{font-size:14px;line-height:2.15;padding:9px 11px}
+.paper.worksheet-annotated-font .paper-continuation{line-height:2}
+.paper.worksheet-annotated-font .prompt-text{line-height:2}
+.paper.worksheet-annotated-font .paper-footer{line-height:1.9}
+@media print{.paper.worksheet-annotated-font .paper-instructions,.paper.worksheet-annotated-font .paper-title{overflow:visible}}
 </style>
 </head>
 <body>
@@ -510,7 +522,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
   </div>
   <div class="panel-section">
    <h3>頁面版面</h3>
-   <div class="form-field"><label for="fontSelect">學習單字體</label><select id="fontSelect" class="select" data-global="font"><option value="'Microsoft JhengHei','PingFang TC',sans-serif">正黑體（清晰）</option><option value="'DFKai-SB','BiauKai','KaiTi',serif">標楷體／楷體（依裝置）</option><option value="'Noto Sans TC','Microsoft JhengHei',sans-serif">Noto Sans TC（依裝置）</option></select></div>
+   <div class="form-field"><label for="fontSelect">學習單字體</label><select id="fontSelect" class="select" data-global="font"><option value="'Microsoft JhengHei','PingFang TC',sans-serif">正黑體（清晰）</option><option value="'DFKai-SB','BiauKai','KaiTi',serif">標楷體／楷體（依裝置）</option><option value="'Noto Sans TC','Microsoft JhengHei',sans-serif">Noto Sans TC（依裝置）</option><option value="zixi-annotation" id="worksheetAnnotatedFontOption">字嗨注音標楷／教師上傳字型（跟隨字型設定）</option></select><p class="font-usage-tip" id="worksheetFontHint">讓頁首、說明和學生資料也能使用網站內建字嗨或教師上傳的字型；描紅格與注音填空符號維持原設定。</p></div>
    <div class="setting-item"><div class="setting-top"><label for="marginRange">紙張邊界</label><span id="marginVal" class="setting-value"></span></div><input id="marginRange" class="range" type="range" min="8" max="23" step="1" data-global-range="margin"></div>
    <label class="toggle"><span>教師答案預覽</span><input id="answerCheck" type="checkbox"></label>
    <label class="toggle"><span>顯示插圖名稱</span><input type="checkbox" data-global-check="showImageCaption"></label>
@@ -562,6 +574,7 @@ function updateFontProgress(text,percent=null){
  if(bar&&percent!==null)bar.style.width=Math.min(100,Math.max(0,percent))+'%';
 }
 function reportZihiStatus(message,level='ok'){
+  syncWorksheetFontOption();
  document.querySelectorAll('[id^="bpmfStatus"]').forEach(el=>{el.textContent=message;el.className='font-info font-status-primary '+level;});
  document.querySelectorAll('[data-reset-zihi]').forEach(el=>{
   el.classList.toggle('active',zihiFontMode==='builtin');
@@ -639,7 +652,7 @@ async function ensureBundledFont(){
    document.documentElement.style.setProperty('--annotation-font',"'"+V16_FACE_NAME+"'");
    const msg=wasCached?'✓ 已從瀏覽器快取載入字嗨字型，下次可繼續使用。':'✓ 已載入內建字型；若瀏覽器允許，已保存供下次使用。';
    reportZihiStatus(msg);updateFontProgress(msg,100);
-   renderPaper();applyZoom();fitDraftPreview();
+   renderPaper();renderGlobalControls();applyZoom();fitDraftPreview();
    return true;
   }catch(err){
    if(zihiFontMode==='builtin'){
@@ -678,7 +691,7 @@ async function setZihiFont(file,{remember=true}={}){
   else saveFontChoice('custom');
   const msg=stored?'✓ 已載入並儲存教師自訂字型：'+file.name:'✓ 已載入字型：'+file.name+'；未保存，下次需重新上傳。';
   reportZihiStatus(msg);updateFontProgress(msg,100);
-  renderPaper();applyZoom();fitDraftPreview();toast('已切換自訂字型');
+  renderPaper();renderGlobalControls();applyZoom();fitDraftPreview();toast('已切換自訂字型');
   closeFontManager();return true;
  }catch(err){if(newFace)document.fonts.delete(newFace);updateFontProgress('⚠ 自訂字型載入失敗，請換一個字型。',0);toast('自訂字型載入失敗');return false;}
 }
@@ -694,7 +707,7 @@ async function restoreFontChoice(){
    const face=await installFontFace(await saved.blob.arrayBuffer(),'ZixiLocalFont');
    zihiFace=face;zihiFontMode='custom';zihiFontReady=true;
    document.documentElement.style.setProperty('--annotation-font',"'ZixiLocalFont'");
-   reportZihiStatus('✓ 已從本機恢復自訂字型：'+saved.name);renderPaper();applyZoom();fitDraftPreview();
+   reportZihiStatus('✓ 已從本機恢復自訂字型：'+saved.name);renderPaper();renderGlobalControls();applyZoom();fitDraftPreview();
   }catch{reportZihiStatus('⚠ 找不到先前的自訂字型，請重新上傳。','warn');openFontManager();}
  }else if(choice==='later'){
   zihiFontMode='later';zihiFontReady=false;
@@ -707,7 +720,7 @@ function useFontLater(){
  saveFontChoice('later');
  reportZihiStatus('已略過字嗨字型；可隨時在網站字型設定重新選擇。','warn');
  updateFontProgress('已選擇稍後設定；一般注音填空仍可使用。',100);
- renderPaper();applyZoom();fitDraftPreview();closeFontManager();
+ renderPaper();renderGlobalControls();applyZoom();fitDraftPreview();closeFontManager();
 }
 function getPhoneticOptions(ch){return bpmfReadings[ch]||[];}
 function variantCount(ch){return Math.max(1,BPMF_VARIANT_COUNTS[ch]||1);}
@@ -852,6 +865,15 @@ const library={
 const svgData=s=>`data:image/svg+xml;charset=utf-8,${encodeURIComponent(s)}`;
 let selectedId=null,previewMode=false,zoom=0.9,preset='support',state;
 let currentStage='home',draftHasGenerated=false;
+const WORKSHEET_ANNOTATED_FONT='zixi-annotation';
+function worksheetFontFamily(){return state.font===WORKSHEET_ANNOTATED_FONT?"var(--annotation-font), 'DFKai-SB', 'BiauKai', serif":state.font;}
+function syncWorksheetFontOption(){
+ const option=document.getElementById('worksheetAnnotatedFontOption');
+ if(!option)return;
+ option.textContent=zihiFontReady?(zihiFontMode==='custom'?'教師上傳字型（目前已載入）':'網站內建字嗨注音標楷（目前已載入）'):'字嗨／教師上傳字型（請先在字型設定中載入）';
+ const hint=document.getElementById('worksheetFontHint');
+ if(hint){const applied=state?.font===WORKSHEET_ANNOTATED_FONT;hint.textContent=applied?(zihiFontReady?'已套用到頁首、標題、全卷說明、班級／座號／姓名及一般題目文字；破音字與列印結果請教師校對。':'注音字型尚未載入，目前暫以一般楷體呈現。請按上方「字型設定」載入網站內建字嗨或教師字型。'):'可跟隨上方「字型設定」目前選擇的字嗨或教師上傳字型；只調整學習單一般文字，不改變描紅格及注音填空符號。';}
+}
 const modeMeta={hanzi:{name:'國字',title:'國字習寫學習單',instructions:'看國字與插圖，依正確筆順練習書寫。'},zhuyin:{name:'注音',title:'注音填空學習單',instructions:'看國字，填寫注音空格。'},both:{name:'國字＋注音',title:'國字與注音練習單',instructions:'參考提示字的國字與直式注音，在每組練習格中寫出國字及正確注音。'}};
 const defaults={version:13,showAnnotatedExample:false,mode:'both',sourceChars:'花、山、雨、魚、月',name:'一年級國語學習單',title:'國字與注音練習單',grade:'一',gradeLabel:'一年級 · 國語科',instructions:'看國字，填入正確的注音，接著練習國字書寫。',showClass:true,showSeat:true,showName:true,classText:"",seatText:"",studentName:"",showImageCaption:false,showFooter:false,margin:14,font:"'Microsoft JhengHei','PingFang TC',sans-serif",items:[]};
 const newId=()=>`${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
@@ -968,7 +990,8 @@ function paperItemHtml(item,idx){
 }
 function createA4Page(index,measurement=false){
  const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':state.mode==='both'?' both-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
- page.style.fontFamily=state.font;
+ page.style.fontFamily=worksheetFontFamily();
+  page.classList.toggle('worksheet-annotated-font',state.font===WORKSHEET_ANNOTATED_FONT);
  page.style.paddingLeft=state.margin+'mm';page.style.paddingRight=state.margin+'mm';
  page.style.paddingTop=Math.max(10,state.margin)+'mm';page.style.paddingBottom=Math.max(10,state.margin)+'mm';
  page.classList.toggle('previewing',measurement||previewMode);
@@ -1025,7 +1048,7 @@ function renderPaper(){
  syncDraftPreview();
 }
 function renderList(){const host=$('#itemList');host.innerHTML=state.items.map((it,n)=>`<div class="item-row ${selectedId===it.id?'active':''}" data-list-id="${esc(it.id)}" draggable="true"><span class="num">${n+1}</span><strong class="glyph">${esc(it.char)}</strong><div class="item-text">${esc(it.phonetic||'尚未設定注音')}<div>${wordParts(it).length>1?'詞語 · '+wordParts(it).length+' 字 · ':''}${state.mode==='zhuyin'?'注音填空':it.gridCount+' 格／字'}</div></div><div class="row-actions"><button class="mini" data-action="up" data-id="${esc(it.id)}" aria-label="上移" title="上移">↑</button><button class="mini" data-action="down" data-id="${esc(it.id)}" aria-label="下移" title="下移">↓</button></div></div>`).join('');const ready=!!getSelected();$('#duplicateSelectedBtn').disabled=!ready||state.items.length>=120;$('#deleteSelectedBtn').disabled=!ready;}
-function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>{const fixed=el.dataset.globalCheck==='showAnnotatedExample'&&state.mode==='both';el.checked=fixed||!!state[el.dataset.globalCheck];el.disabled=fixed;});$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
+function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);syncWorksheetFontOption();setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>{const fixed=el.dataset.globalCheck==='showAnnotatedExample'&&state.mode==='both';el.checked=fixed||!!state[el.dataset.globalCheck];el.disabled=fixed;});$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
 function renderInspector(){const el=$('#inspector'),it=getSelected();if(!it){el.innerHTML='<div class="empty-inspector"><div class="illustration">✎</div><h3>請選取一個題目</h3><p>在中央學習單點擊題目，或在左側版面調整的題目清單中選取。</p></div>';return;}
 const parts=wordParts(it),isWord=parts.length>1;
 let html=`<div class="inspector-section"><h3>① 題目內容</h3><div class="form-field"><label>練習國字或詞語（同一題最多 6 字）</label><input class="input" data-item-prop="char" maxlength="6" value="${esc(it.char)}"></div><p class="word-tip">多字詞語會視為同一題。</p>
@@ -1244,7 +1267,14 @@ function setupEvents(){
   renderAll();scheduleSave();toast('已刪除選取題目');
  });
  $('#inspector').addEventListener('change',async e=>{if(e.target.id!=='imageUpload')return;const it=getSelected(),file=e.target.files?.[0];if(!it||!file)return;if(file.size>12*1024*1024){toast('圖片超過 12 MB，請先壓縮再上傳');return;}if(file.type==='image/svg+xml'){toast('為避免 SVG 夾帶不安全內容，請改傳 PNG／JPG／WebP');return;}if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){toast('請選擇 PNG、JPG、WebP 或 GIF 圖片');return;}try{const img=new Image();const url=URL.createObjectURL(file);try{await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url;});let max=960,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);it.uploadedImage=canvas.toDataURL('image/webp',.88);it.imageId='upload';it.showImage=true;if(it.imagePosition==='none')it.imagePosition='right';renderAll();scheduleSave();toast('已換成自訂插圖，會保留在備份專案中');}finally{URL.revokeObjectURL(url);}}catch(err){toast('圖片讀取失敗，請換一張再試');}});
- document.querySelectorAll('[data-global]').forEach(el=>el.addEventListener('input',()=>{state[el.dataset.global]=el.value;renderPaper();applyZoom();scheduleSave();}));
+ document.querySelectorAll('[data-global]').forEach(el=>el.addEventListener('input',()=>{
+  state[el.dataset.global]=el.value;
+  if(el.dataset.global==='font'&&state.font===WORKSHEET_ANNOTATED_FONT&&!zihiFontReady){
+   if(zihiFontMode==='builtin')void ensureBundledFont();
+   else{openFontManager();toast('請先選擇網站內建字嗨字型，或上傳教師字型');}
+  }
+  renderPaper();renderGlobalControls();applyZoom();scheduleSave();
+ }));
  document.querySelectorAll('[data-global-check]').forEach(el=>el.addEventListener('change',()=>{state[el.dataset.globalCheck]=el.checked;renderPaper();applyZoom();scheduleSave();}));
  $('#marginRange').addEventListener('input',e=>{state.margin=Number(e.target.value);$('#marginVal').textContent=state.margin+' mm';renderPaper();applyZoom();scheduleSave();});
  $('#answerCheck').addEventListener('change',e=>{window.showAnswers=e.target.checked;renderPaper();applyZoom();});
