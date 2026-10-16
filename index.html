@@ -386,6 +386,27 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
 .font-manager-foot{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap}.font-manager-foot label{display:flex;align-items:center;gap:6px;font-size:12px;color:#3e6460}
 .font-manager-foot .btn{min-width:110px}.font-manager-hint{font-size:11px;color:#6d8482;line-height:1.55;margin-top:11px}
 @media print{.font-manager,[data-open-font-settings]{display:none!important}}
+
+/* 國字＋注音：每格固定相連的一個十字國字格及一個直式注音書寫欄。 */
+.paper.both-sheet .combined-writing-pair{display:inline-flex;align-items:stretch;flex:none;break-inside:avoid;page-break-inside:avoid}
+.paper.both-sheet .combined-writing-pair>.grid-cell{width:var(--cell-size);height:var(--cell-size);min-width:var(--cell-size);flex:0 0 var(--cell-size)!important;margin:0}
+.paper.both-sheet .combined-zhuyin-space{display:flex;align-items:stretch;box-sizing:border-box;flex:none;width:max(39px,calc(var(--cell-size)*.75));height:var(--cell-size);padding:3px 3px 3px 4px;border:1.6px solid #526670;border-left:0;background:#fff}
+.paper.both-sheet .combined-zhuyin-guide{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+.paper.both-sheet .combined-zhuyin-guide i{display:block;flex:1;min-height:0}
+.paper.both-sheet .combined-zhuyin-guide i+i{border-top:1px dashed #9aacb3}
+.paper.both-sheet .combined-tone-space{position:relative;flex:0 0 12px;border-left:1px dashed #b6c5c9}
+.paper.both-sheet .combined-tone-space:after{content:'';position:absolute;left:2px;right:2px;top:50%;border-top:1px dashed #b6c5c9}
+.paper.both-sheet .practice-grid{gap:7px 8px;align-items:center}
+.paper.both-sheet .word-copy-boxes{flex-wrap:wrap;max-width:100%;gap:3px;align-items:stretch}
+.paper.both-sheet .word-copy{max-width:100%;min-width:0}
+.paper.both-sheet .word-copy-boxes .combined-writing-pair>.grid-cell{flex:0 0 var(--cell-size)!important}
+.paper.both-sheet .word-examples .word-example{gap:3px;align-items:center}
+.paper.both-sheet .combined-reading{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:31px;min-height:58px;padding:3px 12px 3px 0;color:#253f46;font-size:17px;font-weight:650;line-height:1.1}
+.paper.both-sheet .combined-reading-sign{display:block;min-height:18px}
+.paper.both-sheet .combined-reading-tone{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:18px;line-height:1}
+.paper.both-sheet .combined-reading-tone.is-neutral{right:auto;left:6px;top:-4px;transform:none}
+.paper.both-sheet .combined-reading.is-pending{font-size:11px;color:#8a6d39;writing-mode:vertical-rl}
+@media print{.paper.both-sheet .combined-zhuyin-space{border-color:#526670!important;background:#fff!important}.paper.both-sheet .combined-zhuyin-guide i+i,.paper.both-sheet .combined-tone-space{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -471,7 +492,7 @@ body.focus-preview .zhuyin-fill,body.printing .zhuyin-fill{border-color:transpar
  <aside id="leftpane" class="leftpane">
   <div class="pane-heading"><h2>版面調整</h2></div><div class="section-tag" id="editorModeTag">國語科</div>
   <button id="backToDraftLeft" class="editor-back">← 返回初稿設定與確認</button>
-  <div class="panel-section font-option-row"><h3>國字注音字型</h3><div class="font-source-picker"><button type="button" class="btn small active" data-reset-zihi="editor">✓ 網站內建字嗨字型</button></div><label class="font-pick">↥ 另上傳自訂字型<input type="file" id="bpmfFontEditor" accept=".ttf,.otf,.woff,.woff2"></label><div id="bpmfStatusEditor" class="font-info font-status-primary" aria-live="polite">尚未選擇字型來源</div><p class="font-usage-tip">注音例字使用目前選定字型；描紅格固定優先使用標楷體。自訂字型若沒有注音 IVS 字形，可能無法顯示右側注音。</p><label class="toggle"><span>例字顯示完整直式注音</span><input type="checkbox" data-global-check="showAnnotatedExample" id="showAnnotatedExample"></label><p class="pane-hint">國字模式預設顯示；注音填空模式預設隱藏，避免洩漏答案。點例字可切換讀音。</p></div>
+  <div class="panel-section font-option-row"><h3>國字注音字型</h3><div class="font-source-picker"><button type="button" class="btn small active" data-reset-zihi="editor">✓ 網站內建字嗨字型</button></div><label class="font-pick">↥ 另上傳自訂字型<input type="file" id="bpmfFontEditor" accept=".ttf,.otf,.woff,.woff2"></label><div id="bpmfStatusEditor" class="font-info font-status-primary" aria-live="polite">尚未選擇字型來源</div><p class="font-usage-tip">注音例字使用目前選定字型；描紅格固定優先使用標楷體。自訂字型若沒有注音 IVS 字形，可能無法顯示右側注音。</p><label class="toggle"><span>例字顯示完整直式注音</span><input type="checkbox" data-global-check="showAnnotatedExample" id="showAnnotatedExample"></label><p class="pane-hint">國字＋注音模式固定顯示讀音提示；注音填空模式仍可隱藏答案。點例字可切換讀音。</p></div>
   <div class="panel-section">
    <div class="pane-heading"><h2>題目清單</h2><button id="addItemBtn" class="btn small">＋ 新增練習題</button></div>
    <p class="pane-hint">選取題目調整，↑ ↓ 改變順序。</p>
@@ -831,7 +852,7 @@ const library={
 const svgData=s=>`data:image/svg+xml;charset=utf-8,${encodeURIComponent(s)}`;
 let selectedId=null,previewMode=false,zoom=0.9,preset='support',state;
 let currentStage='home',draftHasGenerated=false;
-const modeMeta={hanzi:{name:'國字',title:'國字習寫學習單',instructions:'看國字與插圖，依正確筆順練習書寫。'},zhuyin:{name:'注音',title:'注音填空學習單',instructions:'看國字，填寫注音空格。'},both:{name:'國字＋注音',title:'國字與注音練習單',instructions:'看國字，完成注音填空及國字練寫。'}};
+const modeMeta={hanzi:{name:'國字',title:'國字習寫學習單',instructions:'看國字與插圖，依正確筆順練習書寫。'},zhuyin:{name:'注音',title:'注音填空學習單',instructions:'看國字，填寫注音空格。'},both:{name:'國字＋注音',title:'國字與注音練習單',instructions:'參考提示字的國字與直式注音，在每組練習格中寫出國字及正確注音。'}};
 const defaults={version:13,showAnnotatedExample:false,mode:'both',sourceChars:'花、山、雨、魚、月',name:'一年級國語學習單',title:'國字與注音練習單',grade:'一',gradeLabel:'一年級 · 國語科',instructions:'看國字，填入正確的注音，接著練習國字書寫。',showClass:true,showSeat:true,showName:true,classText:"",seatText:"",studentName:"",showImageCaption:false,showFooter:false,margin:14,font:"'Microsoft JhengHei','PingFang TC',sans-serif",items:[]};
 const newId=()=>`${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 function cleanUnit(s){return Array.from(String(s||'')).filter(c=>/\p{Script=Han}/u.test(c)).join('');}
@@ -855,7 +876,7 @@ function normalizeState(s){const obj={...structuredClone(defaults),...s};if(!mod
   // V8 以前的預設提示不算個別題目說明；僅保存教師自訂內容。
   const oldDefaults=['看國字，依正確筆順練習書寫。','看國字與圖片，填入正確的注音。','看國字，填入正確的注音，再依序練習書寫。'];
   if(oldDefaults.includes((item.prompt||'').trim()))item.prompt='';
-  return item;});if(s.showAnnotatedExample===undefined)obj.showAnnotatedExample=obj.mode==='hanzi';obj.version=13;return obj;}
+  return item;});if(s.showAnnotatedExample===undefined)obj.showAnnotatedExample=obj.mode!=='zhuyin';obj.version=13;return obj;}
 function extractPracticeUnits(text){const raw=String(text||'').trim();const groups=/[、\r\n]/.test(raw)?raw.split(/[、\r\n]+/):raw.split(/\s+/);return groups.map(cleanUnit).filter(Boolean);}
 
 function gridGuideSvg(){return '<svg class="grid-guides" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="50" y1="0" x2="50" y2="100"/><line x1="0" y1="50" x2="100" y2="50"/></svg>';}
@@ -904,31 +925,49 @@ function studentFieldHtml(label,key,placeholder){
 }
 function paperHeaderHtml(){return `<header class="paper-header"><div class="paper-grade" contenteditable="${!previewMode}" data-edit-global="gradeLabel" spellcheck="false">${esc(state.gradeLabel)}</div><div class="paper-title" contenteditable="${!previewMode}" data-edit-global="title" spellcheck="false">${esc(state.title)}</div><div class="paper-subline">${state.showClass?studentFieldHtml('班級','classText','點擊填入'):''}${state.showSeat?studentFieldHtml('座號','seatText','填入'):''}${state.showName?studentFieldHtml('姓名','studentName','點擊填入'):''}</div></header>${state.instructions?.trim()?`<div class="paper-instructions" contenteditable="${!previewMode}" data-edit-global="instructions" spellcheck="false">${esc(state.instructions)}</div>`:''}`;}
 function renderCharacterButton(item,part,index){
- const annotated=state.showAnnotatedExample&&zihiFontReady&&!part.manualUnmatched;
+ const annotated=(state.showAnnotatedExample||state.mode==='both')&&zihiFontReady&&!part.manualUnmatched;
  return `<button type="button" class="pron-target ${annotated?'with-annotation':''}" data-pron-target="${esc(item.id)}" data-pron-char-index="${index}" title="輕觸切換「${esc(part.char)}」的讀音" aria-label="切換「${esc(part.char)}」的讀音"><span class="${annotated?'native-hanzi':'plain-hanzi'}">${esc(annotated?variantText(part.char,part.variantIndex):part.char)}</span><span class="pron-tap-hint">↻ 換讀音</span></button>`;
 }
-function renderWritingCells(item,character){
- return Array.from({length:Math.max(1,item.gridCount)},(_,n)=>`<div class="grid-cell ${n<item.traceCount?'trace':'blank'}" aria-label="${n<item.traceCount?'描紅格':'空白習寫格'}" style="--cell-size:${item.gridSize}px">${gridGuideSvg()}<span class="grid-glyph">${esc(character)}</span></div>`).join('');
+/* 國字＋注音：每個習寫格是一個國字田字格，右側緊鄰獨立直式注音欄。 */
+function renderWritingCell(item,ch,n){
+ const trace=n<item.traceCount;
+ const grid=`<div class="grid-cell ${trace?'trace':'blank'}" aria-label="${trace?'描紅':'空白'}國字習寫格" style="--cell-size:${item.gridSize}px">${gridGuideSvg()}<span class="grid-glyph">${esc(ch)}</span></div>`;
+ if(state.mode!=='both')return grid;
+ return `<div class="combined-writing-pair" style="--cell-size:${item.gridSize}px" role="group" aria-label="${esc(ch)}的國字和注音練寫格">${grid}<div class="combined-zhuyin-space" role="img" aria-label="直式注音書寫空格"><div class="combined-zhuyin-guide" aria-hidden="true"><i></i><i></i><i></i></div><span class="combined-tone-space" aria-hidden="true"></span></div></div>`;
+}
+function renderWritingCells(item,character){return Array.from({length:Math.max(1,item.gridCount)},(_,n)=>renderWritingCell(item,character,n)).join('');}
+/* 字嗨字型未就緒時，仍以獨立縱排提示顯示國字的正確讀音。 */
+function renderCombinedReading(part){
+ const p=parseZhuyinSyllable(part?.phonetic||''),syms=[p.initial,p.medial,p.final].filter(Boolean);
+ if(!syms.length)return '<span class="combined-reading is-pending">請設定注音</span>';
+ const tone=p.tone?`<span class="combined-reading-tone ${p.neutral?'is-neutral':''}">${esc(p.tone)}</span>`:'';
+ return `<span class="combined-reading" role="img" aria-label="${esc(part.phonetic)}">${syms.map(s=>`<span class="combined-reading-sign">${esc(s)}</span>`).join('')}${tone}</span>`;
+}
+function renderExampleLabel(item,part,index){
+ const button=renderCharacterButton(item,part,index);
+ if(state.mode==='zhuyin')return button+zhuyinHtml(item,index,part);
+ if(state.mode==='both'&&(!zihiFontReady||part.manualUnmatched))return button+renderCombinedReading(part);
+ return button;
 }
 function paperItemHtml(item,idx){
  const parts=wordParts(item),isWord=parts.length>1;
  const src=itemImageSrc(item),pic=src?`<div class="illus-wrap" style="--image-size:${item.imageSize}px"><img src="${esc(src)}" alt="${esc(item.imageId==='upload'?'教師上傳插圖':item.imageId+'插圖')}">${state.showImageCaption?`<span class="illu-caption">${esc(item.imageId==='upload'?'自訂插圖':item.imageId)}</span>`:''}</div>`:'';
- const showGrid=state.mode!=='zhuyin',showZhuyin=state.mode!=='hanzi';
+ const showGrid=state.mode!=='zhuyin';
  let center;
  if(isWord){
-  const examples=parts.map((part,n)=>`<div class="target-character word-example">${renderCharacterButton(item,part,n)}${showZhuyin?zhuyinHtml(item,n,part):''}</div>`).join('');
-  const writing=showGrid?`<div class="word-repeat-grid">${Array.from({length:Math.max(1,item.gridCount)},(_,rep)=>`<div class="word-copy ${rep<item.traceCount?'word-copy-trace':''}" aria-label="${esc(item.char)}，第 ${rep+1} 組練寫"><div class="word-copy-label">${rep<item.traceCount?'描紅':'練寫'} ${rep+1}</div><div class="word-copy-boxes">${parts.map(part=>`<div class="grid-cell ${rep<item.traceCount?'trace':'blank'}" style="--cell-size:${item.gridSize}px">${gridGuideSvg()}<span class="grid-glyph">${esc(part.char)}</span></div>`).join('')}</div></div>`).join('')}</div>`:'<div class="grid-caption"></div>';
+  const examples=parts.map((part,n)=>`<div class="target-character word-example">${renderExampleLabel(item,part,n)}</div>`).join('');
+  const writing=showGrid?`<div class="word-repeat-grid">${Array.from({length:Math.max(1,item.gridCount)},(_,rep)=>`<div class="word-copy ${rep<item.traceCount?'word-copy-trace':''}" aria-label="${esc(item.char)}，第 ${rep+1} 組練寫"><div class="word-copy-label">${rep<item.traceCount?'描紅':'練寫'} ${rep+1}</div><div class="word-copy-boxes">${parts.map(part=>renderWritingCell(item,part.char,rep)).join('')}</div></div>`).join('')}</div>`:'<div class="grid-caption"></div>';
   center=`<div class="practice-group mode-${state.mode} word-practice-group"><div class="word-examples">${examples}</div>${writing}</div>`;
 
  }else{
   const part=parts[0]||{char:item.char,variantIndex:item.variantIndex||0,phonetic:item.phonetic};
-  const button=renderCharacterButton(item,part,0);
-  center=`<div class="practice-group mode-${state.mode}"><div class="target-character">${button}${showZhuyin?zhuyinHtml(item,0,part):''}</div>${showGrid?`<div class="practice-main"><div class="practice-grid">${renderWritingCells(item,part.char)}</div></div>`:''}</div>`;
+  const button=renderExampleLabel(item,part,0);
+  center=`<div class="practice-group mode-${state.mode}"><div class="target-character">${button}</div>${showGrid?`<div class="practice-main"><div class="practice-grid">${renderWritingCells(item,part.char)}</div></div>`:''}</div>`;
  }
  return `<section class="paper-item ${!previewMode&&item.id===selectedId?'is-selected':''}" tabindex="${previewMode?-1:0}" data-item-id="${esc(item.id)}"><div class="prompt"><span class="item-counter">${idx+1}</span>${item.prompt?.trim()?`<span class="prompt-text" contenteditable="${!previewMode}" data-edit-prompt="${esc(item.id)}" spellcheck="false">${esc(item.prompt)}</span>`:''}</div><div class="activity-row">${item.imagePosition==='left'&&item.showImage?pic:''}${center}${item.imagePosition!=='left'&&item.showImage?pic:''}</div></section>`;
 }
 function createA4Page(index,measurement=false){
- const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
+ const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':state.mode==='both'?' both-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
  page.style.fontFamily=state.font;
  page.style.paddingLeft=state.margin+'mm';page.style.paddingRight=state.margin+'mm';
  page.style.paddingTop=Math.max(10,state.margin)+'mm';page.style.paddingBottom=Math.max(10,state.margin)+'mm';
@@ -982,23 +1021,23 @@ function renderPaper(){
  $('#pageCountLabel').textContent=`${number} 頁 A4`;
  $('#centerpane').scrollTop=priorScroll;
  // 只有教師同意使用內建字型後，才可在需要時重新嘗試載入。
- if(state.showAnnotatedExample&&readFontChoice()==='builtin'&&zihiFontMode==='builtin'&&!zihiFontReady&&!builtInLoadTask)void ensureBundledFont();
+ if((state.showAnnotatedExample||state.mode==='both')&&readFontChoice()==='builtin'&&zihiFontMode==='builtin'&&!zihiFontReady&&!builtInLoadTask)void ensureBundledFont();
  syncDraftPreview();
 }
 function renderList(){const host=$('#itemList');host.innerHTML=state.items.map((it,n)=>`<div class="item-row ${selectedId===it.id?'active':''}" data-list-id="${esc(it.id)}" draggable="true"><span class="num">${n+1}</span><strong class="glyph">${esc(it.char)}</strong><div class="item-text">${esc(it.phonetic||'尚未設定注音')}<div>${wordParts(it).length>1?'詞語 · '+wordParts(it).length+' 字 · ':''}${state.mode==='zhuyin'?'注音填空':it.gridCount+' 格／字'}</div></div><div class="row-actions"><button class="mini" data-action="up" data-id="${esc(it.id)}" aria-label="上移" title="上移">↑</button><button class="mini" data-action="down" data-id="${esc(it.id)}" aria-label="下移" title="下移">↓</button></div></div>`).join('');const ready=!!getSelected();$('#duplicateSelectedBtn').disabled=!ready||state.items.length>=120;$('#deleteSelectedBtn').disabled=!ready;}
-function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>el.checked=!!state[el.dataset.globalCheck]);$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
+function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>{const fixed=el.dataset.globalCheck==='showAnnotatedExample'&&state.mode==='both';el.checked=fixed||!!state[el.dataset.globalCheck];el.disabled=fixed;});$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
 function renderInspector(){const el=$('#inspector'),it=getSelected();if(!it){el.innerHTML='<div class="empty-inspector"><div class="illustration">✎</div><h3>請選取一個題目</h3><p>在中央學習單點擊題目，或在左側版面調整的題目清單中選取。</p></div>';return;}
 const parts=wordParts(it),isWord=parts.length>1;
 let html=`<div class="inspector-section"><h3>① 題目內容</h3><div class="form-field"><label>練習國字或詞語（同一題最多 6 字）</label><input class="input" data-item-prop="char" maxlength="6" value="${esc(it.char)}"></div><p class="word-tip">多字詞語會視為同一題。</p>
 ${isWord?`<div class="word-reading-list"><b>逐字讀音與注音</b><p class="word-tip">點選國字可更改讀音。</p>${parts.map((part,n)=>`<div class="word-reading-row"><span class="word-letter">${esc(part.char)}</span><span class="word-reading-entry">${esc(part.phonetic||'待設定')}</span><button type="button" class="btn small" data-pron-open-index="${n}">↻ 選讀音</button>${state.mode!=='hanzi'?`<input class="input" data-part-phonetic="${n}" aria-label="${esc(part.char)} 的正確注音" value="${esc(part.phonetic)}" placeholder="例如 ㄏㄜˊ">`:''}</div>`).join('')}</div>`:`<div class="form-field"><label>例字讀音</label><button type="button" class="btn wide" id="openPronBtn">↻ 選擇讀音：${esc(optionPhonetic(it.char,it.variantIndex||0)||it.phonetic||'檢視可選讀音')}</button><p class="notice">亦可點選 A4 的國字切換讀音。</p></div>${state.mode==='hanzi'?'':`<div class="form-field"><label>正確注音（教師設定答案）</label><input class="input" data-item-prop="phonetic" value="${esc(it.phonetic)}" placeholder="例如 ㄏㄨㄚ、ㄩˇ"></div>`}`}
-${state.mode==='hanzi'?'':`<div class="form-field"><label>此題補充說明（選填）</label><textarea class="textarea" data-item-prop="prompt" rows="2" placeholder="沒有特別說明可留空">${esc(it.prompt)}</textarea></div><div class="zhuyin-help"><strong>點一下注音或聲調，即可挖空。</strong>再點一次即可還原；所有題目都維持直式注音。</div><div class="zhuyin-toolbar"><button type="button" class="btn small" id="showAllPhoneticsBtn">全部顯示</button><button type="button" class="btn small" id="hideAllPhoneticsBtn">全部挖空</button></div><div class="zhuyin-mask-status">選好後可在最下方套用到其他題目。</div>`}</div>`;
-if(state.mode==='hanzi')html+=`<div class="inspector-section"><h3>此題補充說明（選填）</h3><textarea class="textarea" data-item-prop="prompt" rows="2" placeholder="留空即不顯示單題說明">${esc(it.prompt||'')}</textarea></div>`;
+${state.mode==='zhuyin'?`<div class="form-field"><label>此題補充說明（選填）</label><textarea class="textarea" data-item-prop="prompt" rows="2" placeholder="沒有特別說明可留空">${esc(it.prompt)}</textarea></div><div class="zhuyin-help"><strong>點一下注音或聲調，即可挖空。</strong>再點一次即可還原；所有題目都維持直式注音。</div><div class="zhuyin-toolbar"><button type="button" class="btn small" id="showAllPhoneticsBtn">全部顯示</button><button type="button" class="btn small" id="hideAllPhoneticsBtn">全部挖空</button></div><div class="zhuyin-mask-status">選好後可在最下方套用到其他題目。</div>`}</div>`;
+if(state.mode!=='zhuyin')html+=`<div class="inspector-section"><h3>此題補充說明（選填）</h3><textarea class="textarea" data-item-prop="prompt" rows="2" placeholder="留空即不顯示單題說明">${esc(it.prompt||'')}</textarea></div>`;
 if(state.mode!=='zhuyin')html+=`<div class="inspector-section"><h3>② 國字練寫區</h3><div class="setting-item"><div class="setting-top"><label>${isWord?'整個詞語的練寫組數':'習寫格數'}</label><span class="setting-value" data-value="gridCount">${it.gridCount} ${isWord?'組':'格'}</span></div><input class="range" type="range" min="1" max="8" step="1" data-item-range="gridCount" value="${it.gridCount}"></div><div class="setting-item"><div class="setting-top"><label>單格大小</label><span class="setting-value" data-value="gridSize">${it.gridSize} px</span></div><input class="range" type="range" min="42" max="100" step="1" data-item-range="gridSize" value="${it.gridSize}"></div><div class="setting-item"><div class="setting-top"><label>${isWord?'前幾組詞語顯示描紅字':'前幾格顯示描紅字'}</label><span class="setting-value" data-value="traceCount">${it.traceCount} ${isWord?'組':'格'}</span></div><input class="range" type="range" min="0" max="8" step="1" data-item-range="traceCount" value="${it.traceCount}"></div></div>`;
 html+=`<div class="inspector-section"><h3>③ 插圖與圖片</h3><label class="toggle"><span>顯示圖片</span><input type="checkbox" data-item-check="showImage" ${it.showImage?'checked':''}></label><div class="form-field"><label>圖片位置</label><select class="select" data-item-prop="imagePosition"><option value="right" ${it.imagePosition==='right'?'selected':''}>習寫區右側</option><option value="left" ${it.imagePosition==='left'?'selected':''}>習寫區左側</option><option value="none" ${it.imagePosition==='none'?'selected':''}>不顯示</option></select></div><div class="setting-item"><div class="setting-top"><label>插圖大小</label><span class="setting-value" data-value="imageSize">${it.imageSize} px</span></div><input class="range" type="range" min="64" max="175" step="1" data-item-range="imageSize" value="${it.imageSize}"></div><label class="form-field">內建插圖庫</label><div class="selected-picture">${selectedItemImageSrc(it)?`<div class="selected-picture-image"><img src="${esc(selectedItemImageSrc(it))}" alt="目前使用的插圖"><button type="button" class="remove-picture" id="removeSelectedImageBtn" aria-label="刪除此題插圖" title="刪除此題插圖">×</button></div>`:'<div class="illus-placeholder" style="--image-size:60px">無圖片</div>'}<div class="selected-picture-info"><strong>${it.imageId==='upload'?'自訂上傳插圖':library[it.imageId]?it.imageId+'的插圖':'尚未選擇插圖'}</strong>點擊「瀏覽」才會展開所有內建插圖。</div></div><button type="button" class="btn wide" id="browseIllustrationsBtn">▦ 瀏覽內建插圖</button><div class="spacer"></div><label class="upload-label" for="imageUpload">↥ 上傳自己的插圖（可取代內建圖）</label><input id="imageUpload" class="upload-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"><p class="notice">上傳後會縮圖並存入目前的學習單草稿。建議使用清晰、背景簡單的圖片。</p></div>`;
 
 html+=`<div class="batch-section"><h3>④ 套用全部題目</h3><p>只套用勾選的設定，不會改動國字、注音答案或插圖。</p>
 ${state.mode!=='zhuyin'?'<label class="toggle"><input type="checkbox" data-batch="writing" checked><span>習寫格數、格子大小、描紅格數</span></label>':''}
-${state.mode!=='hanzi'?'<label class="toggle"><input type="checkbox" data-batch="phonetic"><span>注音挖空位置（聲母、介音、韻母、聲調）</span></label>':''}
+${state.mode==='zhuyin'?'<label class="toggle"><input type="checkbox" data-batch="phonetic"><span>注音挖空位置（聲母、介音、韻母、聲調）</span></label>':''}
 <label class="toggle"><input type="checkbox" data-batch="image"><span>圖片大小、位置、顯示狀態</span></label>
 
 <button type="button" class="btn primary wide" id="applyAllBtn" ${state.items.length<2?'disabled':''}>套用全部題目（其他 ${Math.max(0,state.items.length-1)} 題）</button></div>`;
@@ -1217,13 +1256,13 @@ function setupEvents(){
  function setPreview(on){previewMode=!!on;document.body.classList.toggle('focus-preview',previewMode);$('#focusBackBtn').classList.toggle('hidden',!previewMode);renderPaper();applyZoom();window.scrollTo(0,0);}
  $('#togglePreviewBtn').onclick=()=>setPreview(true);$('#focusBackBtn').onclick=()=>setPreview(false);
  $('#zoomSelect').onchange=applyZoom;
- $('#printBtn').onclick=async()=>{if(state.mode!=='hanzi'){const missing=state.items.flatMap(it=>wordParts(it).filter(p=>!/[ㄅ-ㄩ]/.test(p.phonetic||'')).map(p=>p.char));if(missing.length){toast('有國字尚未設定注音：'+[...new Set(missing)].slice(0,6).join('、')+'。請先填入正確讀音');return;}}if(state.showAnnotatedExample&&!zihiFontReady){toast('字型尚未載入，請確認內建字型已就緒再列印');return;}const wasPreview=previewMode;previewMode=true;document.body.classList.add('printing');await document.fonts.ready;renderPaper();window.print();previewMode=wasPreview;document.body.classList.remove('printing');renderPaper();applyZoom();};
+ $('#printBtn').onclick=async()=>{if(state.mode!=='hanzi'){const missing=state.items.flatMap(it=>wordParts(it).filter(p=>!/[ㄅ-ㄩ]/.test(p.phonetic||'')).map(p=>p.char));if(missing.length){toast('有國字尚未設定注音：'+[...new Set(missing)].slice(0,6).join('、')+'。請先填入正確讀音');return;}}if(state.mode!=='both'&&state.showAnnotatedExample&&!zihiFontReady){toast('字型尚未載入，請確認內建字型已就緒再列印');return;}const wasPreview=previewMode;previewMode=true;document.body.classList.add('printing');await document.fonts.ready;renderPaper();window.print();previewMode=wasPreview;document.body.classList.remove('printing');renderPaper();applyZoom();};
  $('#exportProjectBtn').onclick=projectExport;$('#openProjectBtn').onclick=()=>$('#openProjectInput').click();$('#openProjectInput').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;if(!confirm('匯入專案將覆蓋目前學習單，請先備份現有修改。要繼續嗎？')){e.target.value='';return;}try{const text=await file.text(),obj=JSON.parse(text),data=obj.data||obj;if(!Array.isArray(data.items)||typeof data.title!=='string')throw new Error('Invalid project');state=normalizeState(data);selectedId=state.items[0]?.id||null;draftHasGenerated=!!state.items.length;previewMode=false;document.body.classList.remove('focus-preview');$('#focusBackBtn').classList.add('hidden');renderAll();showStage('editor');scheduleSave();toast('已匯入，開始細節編輯');}catch(err){toast('不是有效的字習工坊專案檔');}e.target.value='';};
  $('#phoneExpand').onclick=()=>setPaneVisibility('right',true);
  // 三階段分頁導覽：選類別 → 初稿預覽 → 編輯細節
  document.querySelectorAll('[data-choose-mode]').forEach(b=>b.addEventListener('click',()=>{
    if(state.items.length&&!confirm('建立新的學習單將取代目前暫存草稿。若要保留舊學習單，請先用「備份專案」下載。要建立新學習單嗎？'))return;
-   state=initialState();state.mode=b.dataset.chooseMode;state.showAnnotatedExample=state.mode==='hanzi';
+   state=initialState();state.mode=b.dataset.chooseMode;state.showAnnotatedExample=state.mode!=='zhuyin';
    state.title=modeMeta[state.mode].title;state.instructions=modeMeta[state.mode].instructions;
    state.name=state.title;selectedId=null;preset='support';draftHasGenerated=false;
    $('#draftConfirmHelp').textContent='請確認初稿後繼續編輯。';
