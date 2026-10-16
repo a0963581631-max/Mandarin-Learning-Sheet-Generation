@@ -1022,10 +1022,13 @@ function changeSelectedMasks(show){const item=getSelected();if(!item)return;for(
 function selectedItemImageSrc(item){if(item.imageId==='upload'&&item.uploadedImage)return item.uploadedImage;return library[item.imageId]?svgData(library[item.imageId]):null;}
 function itemImageSrc(item){if(!item.showImage||item.imagePosition==='none')return null;return selectedItemImageSrc(item);}
 function studentFieldHtml(label,key,placeholder){
- const val=String(state[key]||'');
- return `<span class="student-field"><span>${label}：</span><span class="student-value" role="textbox" aria-label="${label}（點選可直接輸入）" aria-multiline="false" title="點選後輸入，完成後按 Enter" data-placeholder="${placeholder}" data-edit-global="${key}" contenteditable="${!previewMode}" spellcheck="false">${esc(val)}</span></span>`;
+ const batch=classroomApp.batch(),student=classroomApp.firstStudent();
+ const lookup={classText:batch?.name,seatText:student?.seat,studentName:student?.name};
+ const val=String(batch?(lookup[key]||''):(state[key]||''));
+ const locked=!!batch;
+ return `<span class="student-field"><span>${label}：</span><span class="student-value" role="textbox" aria-label="${label}" title="${locked?'已依班級名冊自動帶入':'點選後輸入，完成後按 Enter'}" data-placeholder="${placeholder}" data-edit-global="${key}" ${locked?`data-class-field="${key}"`:''} contenteditable="${!previewMode&&!locked}" spellcheck="false">${esc(val)}</span></span>`;
 }
-function paperHeaderHtml(){return `<header class="paper-header"><div class="paper-grade" contenteditable="${!previewMode}" data-edit-global="gradeLabel" spellcheck="false">${esc(state.gradeLabel)}</div><div class="paper-title" contenteditable="${!previewMode}" data-edit-global="title" spellcheck="false">${esc(state.title)}</div><div class="paper-subline">${state.showClass?studentFieldHtml('班級','classText','點擊填入'):''}${state.showSeat?studentFieldHtml('座號','seatText','填入'):''}${state.showName?studentFieldHtml('姓名','studentName','點擊填入'):''}</div></header>${state.instructions?.trim()?`<div class="paper-instructions" contenteditable="${!previewMode}" data-edit-global="instructions" spellcheck="false">${esc(state.instructions)}</div>`:''}`;}
+function paperHeaderHtml(){return `<header class="paper-header"><div class="paper-grade" contenteditable="${!previewMode}" data-edit-global="gradeLabel" spellcheck="false">${esc(state.gradeLabel)}</div><div class="paper-title" contenteditable="${!previewMode}" data-edit-global="title" spellcheck="false">${esc(state.title)}</div><div class="paper-subline">${state.showClass||classroomApp.batch()?studentFieldHtml('班級','classText','點擊填入'):''}${state.showSeat||classroomApp.batch()?studentFieldHtml('座號','seatText','填入'):''}${state.showName||classroomApp.batch()?studentFieldHtml('姓名','studentName','點擊填入'):''}</div></header>${state.instructions?.trim()?`<div class="paper-instructions" contenteditable="${!previewMode}" data-edit-global="instructions" spellcheck="false">${esc(state.instructions)}</div>`:''}`;}
 function renderCharacterButton(item,part,index){
  const annotated=(state.showAnnotatedExample||state.mode==='both')&&zihiFontReady&&!part.manualUnmatched;
  return `<button type="button" class="pron-target ${annotated?'with-annotation':''}" data-pron-target="${esc(item.id)}" data-pron-char-index="${index}" title="輕觸切換「${esc(part.char)}」的讀音" aria-label="切換「${esc(part.char)}」的讀音"><span class="${annotated?'native-hanzi':'plain-hanzi'}">${esc(annotated?variantText(part.char,part.variantIndex):part.char)}</span><span class="pron-tap-hint">↻ 換讀音</span></button>`;
@@ -1069,7 +1072,7 @@ function paperItemHtml(item,idx){
  return `<section class="paper-item ${!previewMode&&item.id===selectedId?'is-selected':''}" tabindex="${previewMode?-1:0}" data-item-id="${esc(item.id)}"><div class="prompt"><span class="item-counter">${idx+1}</span>${item.prompt?.trim()?`<span class="prompt-text" contenteditable="${!previewMode}" data-edit-prompt="${esc(item.id)}" spellcheck="false">${esc(item.prompt)}</span>`:''}</div><div class="activity-row">${item.imagePosition==='left'&&item.showImage?pic:''}${center}${item.imagePosition!=='left'&&item.showImage?pic:''}</div></section>`;
 }
 function createA4Page(index,measurement=false){
- const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':state.mode==='both'?' both-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
+ const page=document.createElement('article');page.className='paper'+(state.mode==='zhuyin'?' zhuyin-sheet':state.mode==='both'?' both-sheet':'')+(classroomApp.batch()?' class-batch-sheet':'');page.setAttribute('aria-label',`A4 第 ${index} 頁`);
  page.style.fontFamily=worksheetFontFamily();
   page.classList.toggle('worksheet-annotated-font',state.font===WORKSHEET_ANNOTATED_FONT);
  page.style.paddingLeft=state.margin+'mm';page.style.paddingRight=state.margin+'mm';
@@ -1077,7 +1080,7 @@ function createA4Page(index,measurement=false){
  page.classList.toggle('previewing',measurement||previewMode);
  const content=document.createElement('div');content.className='paper-page-content';
  if(index===1){content.innerHTML=paperHeaderHtml();}
- else{content.innerHTML=`<div class="paper-continuation"><strong>${esc(state.title)}</strong><span>續頁 · 第 ${index} 頁</span></div>`;}
+ else{const batch=classroomApp.batch(),student=classroomApp.firstStudent();const more=batch?`<span class="continuation-student">班級：<b data-class-field="classText">${esc(batch.name)}</b>　座號：<b data-class-field="seatText">${esc(student.seat)}</b>　姓名：<b data-class-field="studentName">${esc(student.name)}</b> · 續頁第 ${index} 頁</span>`:`<span>續頁 · 第 ${index} 頁</span>`;content.innerHTML=`<div class="paper-continuation"><strong>${esc(state.title)}</strong>${more}</div>`;}
  page.append(content);
  if(state.showFooter){const foot=document.createElement('footer');foot.className='paper-footer';foot.innerHTML='<span>練習完成後，請檢查國字和注音是否正確。</span><span>加油，你一定可以！</span>';page.append(foot);}
  const number=document.createElement('span');number.className='paper-page-number';number.textContent=`第 ${index} 頁`;page.append(number);
@@ -1114,21 +1117,30 @@ function renderPaper(){
   }
  }
  if(!state.items.length){current.content.insertAdjacentHTML('beforeend','<div class="tip">尚未建立題目，請返回初稿設定頁產生內容。</div>');}
- // 已量測完畢，轉移至可見容器；保留尺寸、題號與分頁。
- for(const page of [...measure.children]){
-   page.querySelectorAll('.paper-item').forEach(el=>el.classList.toggle('is-selected',!previewMode&&el.dataset.itemId===selectedId));
-   page.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable=String(!previewMode));
-   page.classList.toggle('previewing',previewMode);dest.append(page);
+ // 已使用真實 A4 尺寸量測完成每份的分頁；把範本依照學生座號逐份複製。
+ const templates=[...measure.children],batch=classroomApp.batch();
+ const students=batch?batch.students:[null];
+ for(let si=0;si<students.length;si++){
+  const student=students[si],secondary=si>0;
+  for(let pi=0;pi<templates.length;pi++){
+   const page=templates[pi].cloneNode(true);
+   if(student){classroomApp.personalize(page,student,batch);page.dataset.batchStudent=student.id;page.setAttribute('aria-label',`${batch.name} ${student.seat} 號 ${student.name} · 第 ${pi+1} 頁`);}
+   page.querySelectorAll('.paper-item').forEach(el=>el.classList.toggle('is-selected',!previewMode&&!secondary&&el.dataset.itemId===selectedId));
+   page.querySelectorAll('[contenteditable]').forEach(el=>el.contentEditable=String(!previewMode&&!secondary&&!el.hasAttribute('data-class-field')));
+   page.classList.toggle('previewing',previewMode||secondary);
+   dest.append(page);
+  }
  }
+ measure.innerHTML='';
  $('#itemCountLabel').textContent=`${state.items.length} 道練習題`;
- $('#pageCountLabel').textContent=`${number} 頁 A4`;
+ $('#pageCountLabel').textContent=batch?`${number*students.length} 頁 A4 · ${students.length} 份`:`${number} 頁 A4`;
  $('#centerpane').scrollTop=priorScroll;
  // 只有教師同意使用內建字型後，才可在需要時重新嘗試載入。
  if((state.showAnnotatedExample||state.mode==='both')&&readFontChoice()==='builtin'&&zihiFontMode==='builtin'&&!zihiFontReady&&!builtInLoadTask)void ensureBundledFont();
  syncDraftPreview();
 }
 function renderList(){const host=$('#itemList');host.innerHTML=state.items.map((it,n)=>`<div class="item-row ${selectedId===it.id?'active':''}" data-list-id="${esc(it.id)}" draggable="true"><span class="num">${n+1}</span><strong class="glyph">${esc(it.char)}</strong><div class="item-text">${esc(it.phonetic||'尚未設定注音')}<div>${wordParts(it).length>1?'詞語 · '+wordParts(it).length+' 字 · ':''}${state.mode==='zhuyin'?'注音填空':it.gridCount+' 格／字'}</div></div><div class="row-actions"><button class="mini" data-action="up" data-id="${esc(it.id)}" aria-label="上移" title="上移">↑</button><button class="mini" data-action="down" data-id="${esc(it.id)}" aria-label="下移" title="下移">↓</button></div></div>`).join('');const ready=!!getSelected();$('#duplicateSelectedBtn').disabled=!ready||state.items.length>=120;$('#deleteSelectedBtn').disabled=!ready;}
-function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);syncWorksheetFontOption();setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>{const fixed=el.dataset.globalCheck==='showAnnotatedExample'&&state.mode==='both';el.checked=fixed||!!state[el.dataset.globalCheck];el.disabled=fixed;});$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
+function renderGlobalControls(){const setVal=(id,value)=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=value;};setVal('projectName',state.name);setVal('inputGrade',state.grade);setVal('inputTitle',state.title);setVal('inputChars',state.sourceChars||state.items.map(i=>i.char).join('、'));setVal('gradeLabel',state.gradeLabel);setVal('instructionInput',state.instructions);setVal('fontSelect',state.font);syncWorksheetFontOption();setVal('marginRange',state.margin);$('#marginVal').textContent=`${state.margin} mm`;document.querySelectorAll('[data-global-check]').forEach(el=>{const fixed=(el.dataset.globalCheck==='showAnnotatedExample'&&state.mode==='both')||(!!classroomApp.batch()&&['showClass','showSeat','showName'].includes(el.dataset.globalCheck));el.checked=fixed||!!state[el.dataset.globalCheck];el.disabled=fixed;});$('#answerCheck').checked=!!window.showAnswers;document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('active',el.dataset.preset===preset));}
 function renderInspector(){const el=$('#inspector'),it=getSelected();if(!it){el.innerHTML='<div class="empty-inspector"><div class="illustration">✎</div><h3>請選取一個題目</h3><p>在中央學習單點擊題目，或在左側版面調整的題目清單中選取。</p></div>';return;}
 const parts=wordParts(it),isWord=parts.length>1;
 let html=`<div class="inspector-section"><h3>① 題目內容</h3><div class="form-field"><label>練習國字或詞語（同一題最多 6 字）</label><input class="input" data-item-prop="char" maxlength="6" value="${esc(it.char)}"></div><p class="word-tip">多字詞語會視為同一題。</p>
@@ -1158,20 +1170,21 @@ function renderDraftHeader(){
  $('#draftModeBadge').textContent=modeMeta[state.mode]?.name||'國字＋注音';
  $('#draftCharsLabel').textContent=state.mode==='hanzi'?'練寫國字或詞語（頓號分題）':state.mode==='zhuyin'?'注音填空的國字或詞語（頓號分題）':'國字／詞語＋注音（頓號分題）';
  $('#editorModeTag').textContent=modeMeta[state.mode]?.name||'國字＋注音';
+ classroomApp.syncSelection();
 }
 function syncDraftPreview(){
  const empty=$('#draftEmpty'),paperWrap=$('#draftPaperWrap'),confirmBtn=$('#confirmDraftBtn');
  empty.classList.toggle('hidden',draftHasGenerated);
  paperWrap.classList.toggle('hidden',!draftHasGenerated);
  confirmBtn.disabled=!draftHasGenerated||!state.items.length;
- $('#draftItemCount').textContent=draftHasGenerated?`${state.items.length} 道題目`:'尚未產生';
- $('#draftPreviewDesc').textContent=draftHasGenerated?'A4 初稿（已自動分頁）':'填寫設定後產生初稿。';
+ $('#draftItemCount').textContent=draftHasGenerated?`${state.items.length} 道題目${classroomApp.batch()?' · '+classroomApp.batch().students.length+' 份':''}`:'尚未產生';
+ $('#draftPreviewDesc').textContent=draftHasGenerated?(classroomApp.batch()?`已建立 ${classroomApp.batch().students.length} 份學生專屬 A4 初稿`:'A4 初稿（已自動分頁）'):'填寫設定後產生初稿。';
  if(!draftHasGenerated)return;
  const clone=$('#paper').cloneNode(true);
  clone.querySelectorAll('[contenteditable]').forEach(el=>{el.contentEditable='false';el.removeAttribute('data-edit-global');el.removeAttribute('data-edit-prompt');});
  clone.querySelectorAll('.is-selected').forEach(el=>el.classList.remove('is-selected'));
  const dest=$('#draftPaper');dest.innerHTML=clone.innerHTML;
- $('#draftItemCount').textContent=`${state.items.length} 道題目 · ${dest.querySelectorAll('.paper').length} 頁 A4`;
+ $('#draftItemCount').textContent=`${state.items.length} 道題目 · ${dest.querySelectorAll('.paper').length} 頁 A4${classroomApp.batch()?' · '+classroomApp.batch().students.length+' 份':''}`;
  fitDraftPreview();
 }
 function fitDraftPreview(){
@@ -1240,6 +1253,7 @@ function openIllustrationLibrary(){
 }
 
 function setupEvents(){
+ classroomApp.bind();
  document.querySelectorAll('[data-open-font-settings]').forEach(button=>button.addEventListener('click',openFontManager));
  $('#fontManagerClose').addEventListener('click',closeFontManager);
  $('#fontManager').addEventListener('cancel',e=>{if(fontManagerBusy)e.preventDefault();});
@@ -1292,12 +1306,16 @@ function setupEvents(){
   state.name=state.title;
   state.gradeLabel=`${state.grade}年級 · 國語科`;
   state.sourceChars=$('#inputChars').value;
+  const chosen=state.classId?classroomApp.snapshot(state.classId):null;
+  if(state.classId&&!chosen){toast('所選班級沒有學生或已不存在，請先整理班級名冊');return;}
+  state.batchClass=chosen;
+  if(chosen){state.showClass=true;state.showSeat=true;state.showName=true;}
   state.items=chars.map(ch=>newItem(ch,preset));
   updateAutoReadingStatus();
   selectedId=state.items[0]?.id||null;
   draftHasGenerated=true;
   renderAll();syncDraftPreview();scheduleSave();
-  toast(`已依頓號產生 ${state.items.length} 題（詞語不拆題），請檢查初稿。`);
+  toast(`已產生 ${state.items.length} 題${chosen?'，依座號製作 '+chosen.students.length+' 份':'，共 1 份'}，請確認初稿。`);
  });
  $('#addItemBtn').addEventListener('click',()=>{if(state.items.length>=120){toast('單份學習單最多 120 題');return;}const item=newItem('字',preset);item.imageId='none';state.items.push(item);selectItem(item.id);scheduleSave();toast('已新增一題，可在右側修改國字與注音');});
  $('#itemList').addEventListener('click',e=>{const action=e.target.closest('[data-action]');if(action){moveItem(action.dataset.id,action.dataset.action==='up'?-1:1);return;}const target=e.target.closest('[data-list-id]');if(target)selectItem(target.dataset.listId);});
@@ -1385,7 +1403,7 @@ function setupEvents(){
   $('#resumeBtn').onclick=()=>{if(state.items.length){draftHasGenerated=true;previewMode=false;showStage('editor');renderAll();}};
  window.addEventListener('resize',()=>{applyZoom();fitDraftPreview();});window.addEventListener('beforeprint',()=>{document.querySelector('#paper').classList.add('previewing');});window.addEventListener('afterprint',()=>{document.querySelector('#paper').classList.toggle('previewing',previewMode);});
 }
-(async function init(){loadOnlineReadings();window.showAnswers=false;state=normalizeState(await loadStorage()||initialState());selectedId=state.items[0]?.id||null;setupEvents();renderAll();renderDraftHeader();showStage('home');$('#saveStatus').textContent='✓ 可編輯・本機草稿';await restoreFontChoice();})();
+(async function init(){loadOnlineReadings();window.showAnswers=false;await classroomApp.load();state=normalizeState(await loadStorage()||initialState());selectedId=state.items[0]?.id||null;setupEvents();renderAll();renderDraftHeader();showStage('home');$('#saveStatus').textContent='✓ 可編輯・本機草稿';await restoreFontChoice();})();
 </script>
 <dialog id="fontManager" class="font-manager" aria-labelledby="fontManagerTitle">
  <div class="font-manager-head"><div class="brandmark">字</div><div><h2 id="fontManagerTitle">選擇字習工坊的注音字型</h2><p>首次進站可先下載網站內建字嗨字型，也可改用電腦上的字型；三種學習單模式共用這項選擇。</p></div></div>
